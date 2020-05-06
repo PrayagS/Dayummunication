@@ -7,6 +7,7 @@ from sympy.combinatorics.graycode import GrayCode
 if __name__ == "__main__":
     # message to be transmitted
     msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1])
+    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
     # msg = np.random.randint(low=0, high=2, size=int(1e6))
     # print(msg)
 
@@ -29,7 +30,10 @@ if __name__ == "__main__":
     t = np.linspace(0.0, Tb, int(Tb * f_s))
 
     # Serial to parallel with k=2 (QPSK)
-    symbols = np.array([msg[0::k], msg[1::k], msg[2::k]])
+    bucket_of_buckets = []
+    for i in range(k):
+        bucket_of_buckets.append(msg[i::k])
+    symbols = np.array(bucket_of_buckets)
     print(symbols)
 
     constellation = np.arange(0.0, 2.0 * np.pi, 2.0 * np.pi / M)
