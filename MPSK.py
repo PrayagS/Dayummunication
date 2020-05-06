@@ -3,74 +3,76 @@ from scipy.signal import periodogram
 from scipy.stats import norm
 import matplotlib.pyplot as plt
 from sympy.combinatorics.graycode import GrayCode
+from scipy.spatial import distance
 
-if __name__ == "__main__":
-    # message to be transmitted
-    msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1])
-    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    # msg = np.random.randint(low=0, high=2, size=int(1e6))
-    # print(msg)
+# message to be transmitted
+# msg = np.array([0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0,
+# 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0])  # 8PSK demo signal
 
-    # Carrier signal
-    f_c = 100.0
-    t_c = 1.0 / f_c
+# msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])  # QPSK demo signal
 
-    # Sampling rate
-    f_s = 10000.0
-    t_s = 1.0 / f_s
+msg = np.random.randint(low=0, high=2, size=int(1e3 + 2))
+# print(msg)
 
-    # MPSK Parameters
-    M = 8
-    k = 3
-    Tb = 0.01
-    Eb = 0.001
+# Carrier signal
+f_c = 100.0
+t_c = 1.0 / f_c
 
-    # Time vector
-    # t = np.arange(0.0, t_c, t_s)
-    t = np.linspace(0.0, Tb, int(Tb * f_s))
+# Sampling rate
+f_s = 10000.0
+t_s = 1.0 / f_s
 
-    # Serial to parallel with k=2 (QPSK)
+# MPSK Parameters
+M = 8
+k = int(np.log2(M))
+Tb = 0.01
+Eb = 0.001
+
+
+def bits_to_symbols(bits):
     bucket_of_buckets = []
     for i in range(k):
         bucket_of_buckets.append(msg[i::k])
     symbols = np.array(bucket_of_buckets)
-    print(symbols)
+    return symbols
 
-    constellation = np.arange(0.0, 2.0 * np.pi, 2.0 * np.pi / M)
-    gray_code = list(GrayCode(k).generate_gray())
-    code_theta_dict = {}
+
+def constellation_angles():
+    return np.arange(0.0, 2.0 * np.pi, 2.0 * np.pi / M)
+
+
+def graycode():
+    return list(GrayCode(k).generate_gray())
+
+
+def generate_constellation_table(constellation, gray_code):
+    constellation_table = {}
     for i, code in enumerate(gray_code):
-        code_theta_dict[code] = constellation[i]
-    print(code_theta_dict)
+        constellation_table[code] = constellation[i]
+    return constellation_table
 
+
+def generate_theta_vector(symbols):
     theta = np.zeros(np.size(symbols, axis=1), dtype='float')
-    for k in range(np.size(symbols, axis=1)):
+    for j in range(np.size(symbols, axis=1)):
         bits = []
         for i in range(np.size(symbols, axis=0)):
-            bits.append(symbols[i, k])
+            bits.append(symbols[i, j])
         bits_str = ''
         for bit in bits:
             bits_str += (str(bit))
-        theta[k] = code_theta_dict[bits_str]
-    # Page 8, Lecture 16
-    # if b_0 == 0 and b_1 == 0:
-    #     # theta[k] = 7.0 * np.math.pi / 4.0
-    #     theta[k] = 3.0 * np.math.pi / 2.0
-    # elif b_0 == 0 and b_1 == 1:
-    #     # theta[k] = 5.0 * np.math.pi / 4.0
-    #     theta[k] = np.math.pi
-    # elif b_0 == 1 and b_1 == 1:
-    #     # theta[k] = 3.0 * np.math.pi / 4.0
-    #     theta[k] = np.math.pi / 2.0
-    # elif b_0 == 1 and b_1 == 0:
-    #     # theta[k] = np.math.pi / 4.0
-    #     theta[k] = 0
+        theta[j] = constellation_table[bits_str]
+    return theta
 
-    # A = 1.0
+
+def generate_I_Q_signals(theta):
     A = np.sqrt(Eb)
     I = A * np.cos(theta)  # in-phase component
     Q = A * np.sin(theta)  # quadrature component
+    return I, Q
 
+
+def plot_constellation_diagram(I, Q):
     plt.figure()
     # Makes it look like a circle instead of an ellipse
     plt.axes().set_aspect('equal', 'datalim')
@@ -86,6 +88,9 @@ if __name__ == "__main__":
     plt.tick_params(labelsize=12)
     plt.show()
 
+
+def modulate_signal(symbols, I, Q):
+    t = np.linspace(0.0, Tb, int(Tb * f_s))
     modulated_signal = np.zeros(
         np.size(symbols, axis=1) * len(t), dtype='float')
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
@@ -95,18 +100,18 @@ if __name__ == "__main__":
         # Page 12, Lecture 16
         modulated_signal[k * len(t):(k + 1) * len(t)
                          ] = I[k] * phi_1 - Q[k] * phi_2
-    # print(modulated_signal)
+    return modulated_signal
 
+
+def plot_modulated_signal(symbols, modulated_signal):
     # Time vector for symbols
     # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
     t_sym = np.linspace(0, np.size(symbols, axis=1) * Tb,
                         int(np.size(symbols, axis=1) * Tb * f_s))
-    # print(t_sym)
-    # print(np.size(t_sym, axis=0))
 
     plt.figure()
 
-    plt.title("QPSK", fontsize=14)
+    plt.title("MPSK", fontsize=14)
     plt.xlabel("t", fontsize=14)
     plt.ylabel("Amplitude", fontsize=14)
     plt.tick_params(labelsize=12)
@@ -114,12 +119,15 @@ if __name__ == "__main__":
     plt.plot(t_sym, modulated_signal)
     plt.show()
 
+
+def add_noise(modulated_signal):
     # Noise
     ns = len(modulated_signal)
     noise = np.random.normal(size=ns)
 
     f, psd = periodogram(noise, f_s)
 
+    # Plot noise
     # fig, ax = plt.subplots(2,1)
     # ax[0].plot(noise)
     # ax[1].plot(f, psd)
@@ -127,63 +135,98 @@ if __name__ == "__main__":
     psd_av = np.mean(psd)
     N0 = 2 * psd_av
     modulated_signal += noise
-    print(N0)
+    return N0, modulated_signal
 
-    code_amp_dict = {}
-    amp = [0 for i in range(2)]
+
+def generate_decoding_table(gray_code, constellation_table):
+    decoding_table = {}
     for code in gray_code:
-        print(code, code_theta_dict[code], np.cos(code_theta_dict[code]))
-        amp[0] = np.cos(code_theta_dict[code])
-        amp[1] = np.sin(code_theta_dict[code])
-        print(amp)
-        code_amp_dict[code] = amp
-    print(code_theta_dict)
-    print(code_amp_dict)
+        amp = np.zeros(2, dtype='float')
+        amp[0] = np.cos(constellation_table[code])
+        amp[1] = np.sin(constellation_table[code])
+        decoding_table[code] = amp
+    return decoding_table
 
+
+def demodulate_signal(modulated_signal, decoding_table, gray_code):
     t = np.linspace(0, Tb, int(Tb * f_s))
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     N = len(modulated_signal) // len(t)
     split_modulated_signal = np.array_split(modulated_signal, N)
-    received_symbols = [[] for i in range(k)]
+
+    decoded_symbols = [[] for i in range(k)]
+    constellation_points = []
+    for code in decoding_table:
+        constellation_points.append(decoding_table[code])
+    constellation_points = np.array(constellation_points)
+
     for i in split_modulated_signal:
         s_1 = i * phi_1
         s_2 = i * phi_2
         x = s_1.sum() / f_s
         y = s_2.sum() / f_s
-        rec_bits_str = ""
-        rec_bits_str += str(int(np.sign(x)))
-        rec_bits_str += str(int(np.sign(y)))
-        print(rec_bits_str)
+        decoded_point = np.array([[x, y]])
+        distances = distance.cdist(
+            decoded_point, constellation_points, 'euclidean')
+        code = gray_code[np.argmin(distances[0])]
+        print(decoded_point, distances, np.argmin(distances[0]))
+        for i, bit in enumerate(list(code)):
+            decoded_symbols[i].append(int(bit))
         # if x > 0 and y > 0:
-        #     received_symbols[0].append(0)
-        #     received_symbols[1].append(0)
+        #     decoded_symbols[0].append(0)
+        #     decoded_symbols[1].append(0)
         # elif x < 0 and y > 0:
-        #     received_symbols[0].append(0)
-        #     received_symbols[1].append(1)
+        #     decoded_symbols[0].append(0)
+        #     decoded_symbols[1].append(1)
         # elif x < 0 and y < 0:
-        #     received_symbols[0].append(1)
-        #     received_symbols[1].append(1)
+        #     decoded_symbols[0].append(1)
+        #     decoded_symbols[1].append(1)
         # elif x > 0 and y < 0:
-        #     received_symbols[0].append(1)
-        #     received_symbols[1].append(0)
+        #     decoded_symbols[0].append(1)
+        #     decoded_symbols[1].append(0)
 
-    received_msg = []
-    for i in range(len(received_symbols[0])):
-        for j in range(len(received_symbols)):
-            received_msg.append(received_symbols[j][i])
+    decoded_msg = []
+    for i in range(len(decoded_symbols[0])):
+        for j in range(len(decoded_symbols)):
+            decoded_msg.append(decoded_symbols[j][i])
 
-    np.array(received_msg), msg
+    return decoded_msg
 
+
+def error_probabilities(msg, decoded_msg, N0):
     # Bit Error Probability Calculations
-    Pb = norm.sf(np.sqrt(2 * Eb / N0))
-    print('Theoretical Bit Error Probability:', Pb)
-    Pb_pr = np.count_nonzero(msg != received_msg) / len(msg)
-    print('Practical Bit Error Probability:', Pb_pr)
+    # Pb = norm.sf(np.sqrt(2 * Eb / N0)) This is for BPSK/QPSK
 
     # Symbol Error Probability Calculations
-    k = 2
-    M = 2**k
     Pe = 2 * norm.sf(np.sqrt(2 * k * Eb / N0) * np.sin(np.math.pi / M))
+    print('Theoretical Symbol Error Probability:', Pe)
     Pb = Pe / k
-    print(Pe, Pb)
+    print('Theoretical Bit Error Probability:', Pb)
+    Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)
+    print('Practical Bit Error Probability:', Pb_pr)
+    return Pe, Pb, Pb_pr
+
+
+if __name__ == "__main__":
+
+    symbols = bits_to_symbols(msg)
+    # print(len(symbols), len(symbols[0]), len(symbols[1]))
+    constellation = constellation_angles()
+    gray_code = graycode()
+    constellation_table = generate_constellation_table(
+        constellation, gray_code)
+
+    theta = generate_theta_vector(symbols)
+    I, Q = generate_I_Q_signals(theta)
+
+    plot_constellation_diagram(I, Q)
+    modulated_signal = modulate_signal(symbols, I, Q)
+    # plot_modulated_signal(symbols, modulated_signal)
+    N0, modulated_signal_with_noise = add_noise(modulated_signal)
+    decoding_table = generate_decoding_table(gray_code, constellation_table)
+    decoded_msg = demodulate_signal(
+        modulated_signal_with_noise, decoding_table, gray_code)
+    # print(msg)
+    # print(decoded_msg)
+    Pe, Pb, Pb_pr = error_probabilities(msg, decoded_msg, N0)
