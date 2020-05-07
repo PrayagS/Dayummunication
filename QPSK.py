@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import periodogram
 from scipy.stats import norm
-import matplotlib.pyplot as plt
 
-if __name__ == "__main__":
+
+def main() -> None:
     # message to be transmitted
     msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
     # msg = np.random.randint(low=0, high=2, size=int(1e6))
@@ -29,7 +32,7 @@ if __name__ == "__main__":
     symbols = np.array([msg[0::2], msg[1::2]])
     print(symbols)
 
-    theta = np.zeros(np.size(symbols, axis=1), dtype='float')
+    theta = np.zeros(np.size(symbols, axis=1), dtype="float")
     for k in range(np.size(symbols, axis=1)):
         b_0 = symbols[0, k]
         b_1 = symbols[1, k]
@@ -54,12 +57,13 @@ if __name__ == "__main__":
 
     plt.figure()
     # Makes it look like a circle instead of an ellipse
-    plt.axes().set_aspect('equal', 'datalim')
+    plt.axes().set_aspect("equal", "datalim")
 
     # Time vector for sine and cosine
     t_csd = np.linspace(0.0, 2.0 * np.math.pi, 100)
-    plt.plot(np.sqrt(Eb) * np.sin(t_csd), np.sqrt(Eb) *
-             np.cos(t_csd))  # sqrt(Eb)*sin and sqrt(Eb)*cos
+    plt.plot(
+        np.sqrt(Eb) * np.sin(t_csd), np.sqrt(Eb) * np.cos(t_csd)
+    )  # sqrt(Eb)*sin and sqrt(Eb)*cos
     plt.plot(I, Q, "ro", markersize=12)
     plt.grid()
 
@@ -67,21 +71,20 @@ if __name__ == "__main__":
     plt.tick_params(labelsize=12)
     plt.show()
 
-    modulated_signal = np.zeros(
-        np.size(symbols, axis=1) * len(t), dtype='float')
+    modulated_signal = np.zeros(np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     for k in range(np.size(symbols, axis=1)):
         # Calculates modulated signal for each symbol
         # Page 12, Lecture 16
-        modulated_signal[k * len(t):(k + 1) * len(t)
-                         ] = I[k] * phi_1 - Q[k] * phi_2
+        modulated_signal[k * len(t) : (k + 1) * len(t)] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
     # Time vector for symbols
     # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
-    t_sym = np.linspace(0, np.size(symbols, axis=1) * Tb,
-                        int(np.size(symbols, axis=1) * Tb * f_s))
+    t_sym = np.linspace(
+        0, np.size(symbols, axis=1) * Tb, int(np.size(symbols, axis=1) * Tb * f_s)
+    )
     # print(t_sym)
     # print(np.size(t_sym, axis=0))
 
@@ -143,13 +146,17 @@ if __name__ == "__main__":
 
     # Bit Error Probability Calculations
     Pb = norm.sf(np.sqrt(2 * Eb / N0))
-    print('Theoretical Bit Error Probability:', Pb)
+    print("Theoretical Bit Error Probability:", Pb)
     Pb_pr = np.count_nonzero(msg != received_msg) / len(msg)
-    print('Practical Bit Error Probability:', Pb_pr)
+    print("Practical Bit Error Probability:", Pb_pr)
 
     # Symbol Error Probability Calculations
     k = 2
-    M = 2**k
+    M = 2 ** k
     Pe = 2 * norm.sf(np.sqrt(2 * k * Eb / N0) * np.sin(np.math.pi / M))
     Pb = Pe / k
     print(Pe, Pb)
+
+
+if __name__ == "__main__":
+    main()
