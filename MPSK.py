@@ -13,7 +13,7 @@ from sympy.combinatorics.graycode import GrayCode
 
 # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])  # QPSK demo signal
 
-msg = np.random.randint(low=0, high=2, size=int(1e3 + 2))
+msg = np.random.randint(low=0, high=2, size=int(1e3))
 # print(msg)
 
 # Carrier signal
@@ -25,7 +25,7 @@ f_s = 10000.0
 t_s = 1.0 / f_s
 
 # MPSK Parameters
-M = 8
+M = 16
 k = int(np.log2(M))
 Tb = 0.01
 Eb = 0.001
@@ -54,7 +54,7 @@ def generate_constellation_table(constellation, gray_code):
     return constellation_table
 
 
-def generate_theta_vector(symbols):
+def generate_theta_vector(symbols, constellation_table):
     theta = np.zeros(np.size(symbols, axis=1), dtype="float")
     for j in range(np.size(symbols, axis=1)):
         bits = []
@@ -94,13 +94,15 @@ def plot_constellation_diagram(I, Q):
 
 def modulate_signal(symbols, I, Q):
     t = np.linspace(0.0, Tb, int(Tb * f_s))
-    modulated_signal = np.zeros(np.size(symbols, axis=1) * len(t), dtype="float")
+    modulated_signal = np.zeros(
+        np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     for k in range(np.size(symbols, axis=1)):
         # Calculates modulated signal for each symbol
         # Page 12, Lecture 16
-        modulated_signal[k * len(t) : (k + 1) * len(t)] = I[k] * phi_1 - Q[k] * phi_2
+        modulated_signal[k * len(t): (k + 1) * len(t)
+                         ] = I[k] * phi_1 - Q[k] * phi_2
     return modulated_signal
 
 
@@ -108,7 +110,8 @@ def plot_modulated_signal(symbols, modulated_signal):
     # Time vector for symbols
     # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
     t_sym = np.linspace(
-        0, np.size(symbols, axis=1) * Tb, int(np.size(symbols, axis=1) * Tb * f_s)
+        0, np.size(symbols, axis=1) *
+        Tb, int(np.size(symbols, axis=1) * Tb * f_s)
     )
 
     plt.figure()
@@ -169,7 +172,8 @@ def demodulate_signal(modulated_signal, decoding_table, gray_code):
         x = s_1.sum() / f_s
         y = s_2.sum() / f_s
         decoded_point = np.array([[x, y]])
-        distances = distance.cdist(decoded_point, constellation_points, "euclidean")
+        distances = distance.cdist(
+            decoded_point, constellation_points, "euclidean")
         code = gray_code[np.argmin(distances[0])]
         print(decoded_point, distances, np.argmin(distances[0]))
         for i, bit in enumerate(list(code)):
@@ -214,9 +218,10 @@ def main() -> None:
     # print(len(symbols), len(symbols[0]), len(symbols[1]))
     constellation = constellation_angles()
     gray_code = graycode()
-    constellation_table = generate_constellation_table(constellation, gray_code)
+    constellation_table = generate_constellation_table(
+        constellation, gray_code)
 
-    theta = generate_theta_vector(symbols)
+    theta = generate_theta_vector(symbols, constellation_table)
     I, Q = generate_I_Q_signals(theta)
 
     plot_constellation_diagram(I, Q)
