@@ -137,12 +137,16 @@ def main() -> None:
             received_symbols[0].append(1)
             received_symbols[1].append(0)
 
-    received_msg = []
-    for i in range(len(received_symbols[0])):
-        for j in range(len(received_symbols)):
-            received_msg.append(received_symbols[j][i])
+    received_msg = [
+        received_symbols[j][i]
+        for i, _ in enumerate(received_symbols[0])
+        for j, _ in enumerate(received_symbols)
+    ]
+    # for i in range(len(received_symbols[0])):
+    #     for j in range(len(received_symbols)):
+    #         received_msg.append(received_symbols[j][i])
 
-    np.array(received_msg), msg
+    # np.array(received_msg), msg
 
     # Bit Error Probability Calculations
     Pb = norm.sf(np.sqrt(2 * Eb / N0))
