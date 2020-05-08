@@ -83,7 +83,7 @@ def plot_constellation_diagram(I, Q):
 
 def modulate_signal(symbols, I, Q):
     t = np.linspace(0.0, Tb, int(Tb * f_s))
-    modulated_signal = np.zeros(
+    modulated_signal = np.empty(
         np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
@@ -128,7 +128,7 @@ def add_noise(modulated_signal):
 
     psd_av = np.mean(psd)
     N0 = 2 * psd_av
-    modulated_signal += noise
+    # modulated_signal += noise
     return N0, modulated_signal
 
 
@@ -224,5 +224,6 @@ if __name__ == "__main__":
     k = int(np.log2(M))
     gray_code, constellation_table, modulated_signal_with_noise, N0 = modulate(
         msg, k, M)
-    decoded_msg, Pe, Pb, Pb_pr = demodulate(
+    decoded_msg = demodulate(
         msg, k, M, gray_code, constellation_table, modulated_signal_with_noise, N0)
+    Pe, Pb, Pb_pr = error_probabilities(msg, decoded_msg, N0, k, M)

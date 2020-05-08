@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import periodogram
 from scipy.stats import norm
+from MPSK import error_probabilities
 
 # Carrier signal
 f_c = 100.0
@@ -25,7 +26,7 @@ def modulate(msg):
 
     # Serial to parallel with k=2 (QPSK)
     symbols = np.array([msg[0::2], msg[1::2]])
-    theta = np.zeros(np.size(symbols, axis=1), dtype="float")
+    theta = np.empty(np.size(symbols, axis=1), dtype="float")
     for k in range(np.size(symbols, axis=1)):
         b_0 = symbols[0, k]
         b_1 = symbols[1, k]
@@ -47,7 +48,7 @@ def modulate(msg):
     I = A * np.cos(theta)  # in-phase component
     Q = A * np.sin(theta)  # quadrature component
 
-    modulated_signal = np.zeros(
+    modulated_signal = np.empty(
         np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
@@ -163,4 +164,6 @@ def modulate(msg):
 
 
 if __name__ == "__main__":
-    pass
+    msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
+    received_msg, N0 = modulate(msg)
+    Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)

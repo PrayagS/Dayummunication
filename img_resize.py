@@ -10,5 +10,5 @@ if __name__ == "__main__":
         # hex_arr = arr.hex()
         # im2 = Image.open(io.BytesIO(arr))
         # im2.show()
-        im2 = im.resize((256, 256))
+        im2 = im.resize((512, 512))
         im2.save('img_resized.jpg', format='JPEG')
