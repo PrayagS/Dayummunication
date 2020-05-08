@@ -7,15 +7,6 @@ from scipy.spatial import distance
 from scipy.stats import norm
 from sympy.combinatorics.graycode import GrayCode
 
-# message to be transmitted
-# msg = np.array([0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0,
-# 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0])  # 8PSK demo signal
-
-# msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])  # QPSK demo signal
-
-msg = np.random.randint(low=0, high=2, size=int(1e3))
-# print(msg)
-
 # Carrier signal
 f_c = 100.0
 t_c = 1.0 / f_c
@@ -25,13 +16,11 @@ f_s = 10000.0
 t_s = 1.0 / f_s
 
 # MPSK Parameters
-M = 16
-k = int(np.log2(M))
 Tb = 0.01
 Eb = 0.001
 
 
-def bits_to_symbols(bits):
+def bits_to_symbols(msg, k):
     bucket_of_buckets = []
     for i in range(k):
         bucket_of_buckets.append(msg[i::k])
@@ -39,11 +28,11 @@ def bits_to_symbols(bits):
     return symbols
 
 
-def constellation_angles():
+def constellation_angles(M):
     return np.arange(0.0, 2.0 * np.pi, 2.0 * np.pi / M)
 
 
-def graycode():
+def graycode(k):
     return list(GrayCode(k).generate_gray())
 
 
@@ -94,7 +83,7 @@ def plot_constellation_diagram(I, Q):
 
 def modulate_signal(symbols, I, Q):
     t = np.linspace(0.0, Tb, int(Tb * f_s))
-    modulated_signal = np.zeros(
+    modulated_signal = np.empty(
         np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
@@ -139,7 +128,7 @@ def add_noise(modulated_signal):
 
     psd_av = np.mean(psd)
     N0 = 2 * psd_av
-    modulated_signal += noise
+    # modulated_signal += noise
     return N0, modulated_signal
 
 
@@ -153,7 +142,7 @@ def generate_decoding_table(gray_code, constellation_table):
     return decoding_table
 
 
-def demodulate_signal(modulated_signal, decoding_table, gray_code):
+def demodulate_signal(modulated_signal, decoding_table, gray_code, k):
     t = np.linspace(0, Tb, int(Tb * f_s))
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
@@ -175,21 +164,8 @@ def demodulate_signal(modulated_signal, decoding_table, gray_code):
         distances = distance.cdist(
             decoded_point, constellation_points, "euclidean")
         code = gray_code[np.argmin(distances[0])]
-        print(decoded_point, distances, np.argmin(distances[0]))
         for i, bit in enumerate(list(code)):
             decoded_symbols[i].append(int(bit))
-        # if x > 0 and y > 0:
-        #     decoded_symbols[0].append(0)
-        #     decoded_symbols[1].append(0)
-        # elif x < 0 and y > 0:
-        #     decoded_symbols[0].append(0)
-        #     decoded_symbols[1].append(1)
-        # elif x < 0 and y < 0:
-        #     decoded_symbols[0].append(1)
-        #     decoded_symbols[1].append(1)
-        # elif x > 0 and y < 0:
-        #     decoded_symbols[0].append(1)
-        #     decoded_symbols[1].append(0)
 
     decoded_msg = []
     for i in range(len(decoded_symbols[0])):
@@ -199,7 +175,7 @@ def demodulate_signal(modulated_signal, decoding_table, gray_code):
     return decoded_msg
 
 
-def error_probabilities(msg, decoded_msg, N0):
+def error_probabilities(msg, decoded_msg, N0, k, M):
     # Bit Error Probability Calculations
     # Pb = norm.sf(np.sqrt(2 * Eb / N0)) This is for BPSK/QPSK
 
@@ -213,11 +189,10 @@ def error_probabilities(msg, decoded_msg, N0):
     return Pe, Pb, Pb_pr
 
 
-def main() -> None:
-    symbols = bits_to_symbols(msg)
-    # print(len(symbols), len(symbols[0]), len(symbols[1]))
-    constellation = constellation_angles()
-    gray_code = graycode()
+def modulate(msg, k, M):
+    symbols = bits_to_symbols(msg, k)
+    constellation = constellation_angles(M)
+    gray_code = graycode(k)
     constellation_table = generate_constellation_table(
         constellation, gray_code)
 
@@ -226,16 +201,29 @@ def main() -> None:
 
     plot_constellation_diagram(I, Q)
     modulated_signal = modulate_signal(symbols, I, Q)
-    # plot_modulated_signal(symbols, modulated_signal)
+    # plot_modulated_signal(symbols, modulated_signal, Tb, f_s)
     N0, modulated_signal_with_noise = add_noise(modulated_signal)
+    return gray_code, constellation_table, modulated_signal_with_noise, N0
+
+
+def demodulate(msg, k, M, gray_code, constellation_table, modulated_signal, N0):
     decoding_table = generate_decoding_table(gray_code, constellation_table)
     decoded_msg = demodulate_signal(
-        modulated_signal_with_noise, decoding_table, gray_code
+        modulated_signal, decoding_table, gray_code, k
     )
-    # print(msg)
-    # print(decoded_msg)
-    Pe, Pb, Pb_pr = error_probabilities(msg, decoded_msg, N0)
+    return decoded_msg
 
 
 if __name__ == "__main__":
-    main()
+    # message to be transmitted
+    msg = np.array([0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0,
+                    1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0])  # 8PSK demo signal
+    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])  # QPSK demo signal
+    # msg = np.random.randint(low=0, high=2, size=int(1e3))
+    M = 8
+    k = int(np.log2(M))
+    gray_code, constellation_table, modulated_signal_with_noise, N0 = modulate(
+        msg, k, M)
+    decoded_msg = demodulate(
+        msg, k, M, gray_code, constellation_table, modulated_signal_with_noise, N0)
+    Pe, Pb, Pb_pr = error_probabilities(msg, decoded_msg, N0, k, M)
