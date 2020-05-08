@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import periodogram
 from scipy.stats import norm
+
 from MPSK import error_probabilities
 
 # Carrier signal
@@ -19,7 +20,7 @@ Tb = 0.01
 Eb = 0.001
 
 
-def modulate(msg):
+def modulate(msg: np.ndarray):
     # Time vector
     # t = np.arange(0.0, t_c, t_s)
     t = np.linspace(0.0, Tb, int(Tb * f_s))
@@ -48,15 +49,13 @@ def modulate(msg):
     I = A * np.cos(theta)  # in-phase component
     Q = A * np.sin(theta)  # quadrature component
 
-    modulated_signal = np.empty(
-        np.size(symbols, axis=1) * len(t), dtype="float")
+    modulated_signal = np.empty(np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     for k in range(np.size(symbols, axis=1)):
         # Calculates modulated signal for each symbol
         # Page 12, Lecture 16
-        modulated_signal[k * len(t): (k + 1) * len(t)
-                         ] = I[k] * phi_1 - Q[k] * phi_2
+        modulated_signal[k * len(t) : (k + 1) * len(t)] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
     # Noise
@@ -104,7 +103,7 @@ def modulate(msg):
         for j, _ in enumerate(received_symbols)
     ]
 
-    return received_msg, N0
+    return received_msg, N0, modulated_signal, symbols
 
 
 # def main() -> None:
@@ -127,8 +126,7 @@ def modulate(msg):
 #     # Time vector for symbols
 #     # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
 #     t_sym = np.linspace(
-#         0, np.size(symbols, axis=1) *
-#         Tb, int(np.size(symbols, axis=1) * Tb * f_s)
+#         0, np.size(symbols, axis=1) * Tb, int(np.size(symbols, axis=1) * Tb * f_s)
 #     )
 #     # print(t_sym)
 #     # print(np.size(t_sym, axis=0))
@@ -165,5 +163,6 @@ def modulate(msg):
 
 if __name__ == "__main__":
     msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    received_msg, N0 = modulate(msg)
+    received_msg, N0, modulated_signal = modulate(msg)
+    print(received_msg, N0, len(modulated_signal))
     Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
