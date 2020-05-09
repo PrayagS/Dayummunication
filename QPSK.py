@@ -4,23 +4,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import periodogram
 from scipy.stats import norm
-
 from MPSK import error_probabilities
 
 # Carrier signal
-f_c = 100.0
-t_c = 1.0 / f_c
+# f_c = 100.0
+# t_c = 1.0 / f_c
 
 # Sampling rate
-f_s = 10000.0
-t_s = 1.0 / f_s
+# f_s = 10000.0
+# t_s = 1.0 / f_s
 
 # QPSK Parameters
-Tb = 0.01
-Eb = 0.001
+# Tb = 0.01
+# Eb = 0.001
 
 
-def modulate(msg: np.ndarray):
+def modulate(msg, Eb, Tb, f_c, f_s):
     # Time vector
     # t = np.arange(0.0, t_c, t_s)
     t = np.linspace(0.0, Tb, int(Tb * f_s))
@@ -50,56 +49,38 @@ def modulate(msg: np.ndarray):
     I = A * np.cos(theta)  # in-phase component
     Q = A * np.sin(theta)  # quadrature component
 
-    modulated_signal = np.empty(np.size(symbols, axis=1) * len(t), dtype="float")
+    modulated_signal = np.empty(
+        np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     for k in range(np.size(symbols, axis=1)):
         # Calculates modulated signal for each symbol
         # Page 12, Lecture 16
-        modulated_signal[k * len(t) : (k + 1) * len(t)] = I[k] * phi_1 - Q[k] * phi_2
+        modulated_signal[k * len(t): (k + 1) * len(t)
+                         ] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
-    return symbols, modulated_signal
+    return modulated_signal
 
 
-def add_noise(signal):
-    # Noise
-    ns = len(signal)
-    noise = np.random.normal(size=ns)
+# def add_noise(signal, f_s):
+#     # Noise
+#     ns = len(signal)
+#     noise = np.random.normal(size=ns)
 
-    f, psd = periodogram(noise, f_s)
+#     f, psd = periodogram(noise, f_s)
 
-    # fig, ax = plt.subplots(2,1)
-    # ax[0].plot(noise)
-    # ax[1].plot(f, psd)
+#     # fig, ax = plt.subplots(2,1)
+#     # ax[0].plot(noise)
+#     # ax[1].plot(f, psd)
 
-    psd_av = np.mean(psd)
-    N0 = 2 * psd_av
-    signal_with_noise = signal + noise
-    return signal_with_noise, N0
-
-
-def plot_signal(signal, symbols):
-    # Time vector for symbols
-    # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
-    t_sym = np.linspace(
-        0, np.size(symbols, axis=1) * Tb, int(np.size(symbols, axis=1) * Tb * f_s)
-    )
-
-    # plt.figure()
-
-    # plt.title("QPSK", fontsize=14)
-    # plt.xlabel("t", fontsize=14)
-    # plt.ylabel("Amplitude", fontsize=14)
-    # plt.tick_params(labelsize=12)
-
-    # plt.plot(t_sym, modulated_signal)
-    # plt.show()
-
-    return t_sym, signal
+#     psd_av = np.mean(psd)
+#     N0 = 2 * psd_av
+#     signal_with_noise = signal + noise
+#     return signal_with_noise, N0
 
 
-def demodulate(signal):
+def demodulate(signal, Tb, f_c, f_s):
     t = np.linspace(0, Tb, int(Tb * f_s))
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
@@ -150,10 +131,49 @@ def demodulate(signal):
 #     plt.tick_params(labelsize=12)
 #     plt.show()
 
+#     # Time vector for symbols
+#     # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
+#     t_sym = np.linspace(
+#         0, np.size(symbols, axis=1) *
+#         Tb, int(np.size(symbols, axis=1) * Tb * f_s)
+#     )
+#     # print(t_sym)
+#     # print(np.size(t_sym, axis=0))
+
+#     plt.figure()
+
+#     plt.title("QPSK", fontsize=14)
+#     plt.xlabel("t", fontsize=14)
+#     plt.ylabel("Amplitude", fontsize=14)
+#     plt.tick_params(labelsize=12)
+
+#     plt.plot(t_sym, modulated_signal)
+#     plt.show()
+
+#     # for i in range(len(received_symbols[0])):
+#     #     for j in range(len(received_symbols)):
+#     #         received_msg.append(received_symbols[j][i])
+
+#     # np.array(received_msg), msg
+
+#     # Bit Error Probability Calculations
+#     Pb = norm.sf(np.sqrt(2 * Eb / N0))
+#     print("Theoretical Bit Error Probability:", Pb)
+#     Pb_pr = np.count_nonzero(msg != received_msg) / len(msg)
+#     print("Practical Bit Error Probability:", Pb_pr)
+
+#     # Symbol Error Probability Calculations
+#     k = 2
+#     M = 2 ** k
+#     Pe = 2 * norm.sf(np.sqrt(2 * k * Eb / N0) * np.sin(np.math.pi / M))
+#     Pb = Pe / k
+#     print(Pe, Pb)
+
 
 if __name__ == "__main__":
-    msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    modulated_msg = modulate(msg)
-    msg_with_noise, N0 = add_noise(modulated_msg)
-    received_msg = demodulate(msg_with_noise)
-    Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
+    pass
+    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
+    # modulated_msg = modulate(msg)
+    # msg_with_noise, N0 = add_noise(modulated_msg)
+    # received_msg = demodulate(msg_with_noise)
+    # Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
