@@ -172,8 +172,8 @@ def demodulate(signal, Tb, f_c, f_s):
 
 if __name__ == "__main__":
     pass
-    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    # modulated_msg = modulate(msg)
+    msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
+    modulated_msg = modulate(msg, 0.001, 0.01, 100, 10000)
     # msg_with_noise, N0 = add_noise(modulated_msg)
     # received_msg = demodulate(msg_with_noise)
     # Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
