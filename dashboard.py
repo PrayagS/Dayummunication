@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import base64
 
 import dash
 import dash_core_components as dcc
@@ -22,8 +21,8 @@ def dashboard() -> dash.Dash:
     # )  # 8PSK demo signal
     # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])  # QPSK demo signal
     # msg = np.random.randint(low=0, high=2, size=int(1e3))
-    M = 8
-    k = int(np.log2(M))
+    # M = 8
+    # k = int(np.log2(M))
     t_csd = np.linspace(0.0, 2.0 * np.math.pi, 100)
     f_c = 100.0
     t_c = 1.0 / f_c
@@ -38,7 +37,10 @@ def dashboard() -> dash.Dash:
 
     app.layout = html.Div(
         children=[
-            html.H1(children="Title", style={"textAlign": "center", "margin": 20}),
+            # html.H1(children="Title", style={"textAlign": "center", "margin": 20}),
+            dcc.Graph(id="signal"),
+            dcc.Graph(id="modulated-signal"),
+            dcc.Graph(id="noisy-mod-signal"),
             html.Div(
                 id="input",
                 children=[
@@ -52,13 +54,15 @@ def dashboard() -> dash.Dash:
                     ),
                 ],
             ),
-            dcc.Graph(id="signal"),
-            dcc.Graph(id="modulated-signal"),
         ]
     )
 
     @app.callback(
-        [Output("signal", "figure"), Output("modulated-signal", "figure")],
+        [
+            Output("signal", "figure"),
+            Output("modulated-signal", "figure"),
+            Output("noisy-mod-signal", "figure"),
+        ],
         [Input("submit-button-state", "n_clicks")],
         [State("input-str", "value")],
     )
@@ -94,6 +98,14 @@ def dashboard() -> dash.Dash:
                 },
                 {
                     "data": [dict(x=t_sym, y=mod[2])],
+                    "layout": {
+                        "display": "block",
+                        "margin-left": "auto",
+                        "margin-right": "auto",
+                    },
+                },
+                {
+                    "data": [dict(x=t_sym, y=mod[3])],
                     "layout": {
                         "display": "block",
                         "margin-left": "auto",

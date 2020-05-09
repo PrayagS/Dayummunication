@@ -70,6 +70,7 @@ def modulate(msg: np.ndarray):
 
     psd_av = np.mean(psd)
     N0 = 2 * psd_av
+    original_mod = modulated_signal
     modulated_signal += noise
     print(N0)
 
@@ -103,7 +104,7 @@ def modulate(msg: np.ndarray):
         for j, _ in enumerate(received_symbols)
     ]
 
-    return received_msg, N0, modulated_signal, symbols
+    return received_msg, N0, original_mod, modulated_signal, symbols
 
 
 # def main() -> None:
@@ -163,6 +164,6 @@ def modulate(msg: np.ndarray):
 
 if __name__ == "__main__":
     msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    received_msg, N0, modulated_signal = modulate(msg)
-    print(received_msg, N0, len(modulated_signal))
+    received_msg, N0, x, y = modulate(msg)
+    print(received_msg, N0, len(x), y)
     Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
