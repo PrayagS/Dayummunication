@@ -7,6 +7,7 @@ import dash_html_components as html
 import numpy as np
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 import BPSK
 import BFSK
@@ -150,7 +151,6 @@ def dashboard() -> dash.Dash:
             dcc.Graph(id="signal"),
             dcc.Graph(id="modulated-signal"),
             dcc.Graph(id="noise-signal"),
-            dcc.Graph(id="signal-plus-noise"),
             dcc.Graph(id="demodulated-signal"),
         ]
     )
@@ -160,7 +160,6 @@ def dashboard() -> dash.Dash:
             Output("signal", "figure"),
             Output("modulated-signal", "figure"),
             Output("noise-signal", "figure"),
-            Output("signal-plus-noise", "figure"),
             Output("demodulated-signal", "figure"),
         ],
         [
@@ -242,15 +241,13 @@ def dashboard() -> dash.Dash:
                 go.Scatter(x=t, y=modulated_signal))
             modulated_signal_figure.update_layout(title="Modulated Signal")
 
-            noise_signal_figure = go.Figure()
-            noise_signal_figure.add_trace(go.Scatter(x=t, y=noise_signal))
-            noise_signal_figure.update_layout(title="Noise Signal")
-
-            signal_plus_noise_figure = go.Figure()
-            signal_plus_noise_figure.add_trace(
-                go.Scatter(x=t, y=signal_plus_noise))
-            signal_plus_noise_figure.update_layout(
-                title="Modulated Signal + Noise Signal")
+            noise_signal_figure = make_subplots(rows=1, cols=2)
+            noise_signal_figure.add_trace(
+                go.Scatter(x=t, y=noise_signal), row=1, col=1)
+            noise_signal_figure.add_trace(go.Scatter(
+                x=t, y=signal_plus_noise), row=1, col=2)
+            noise_signal_figure.update_layout(
+                title="Noise Signal and Modulation Signal + Noise Signal")
 
             demodulated_signal_figure = go.Figure()
             demodulated_signal_figure.add_trace(
@@ -261,7 +258,6 @@ def dashboard() -> dash.Dash:
                 binary_signal_figure,
                 modulated_signal_figure,
                 noise_signal_figure,
-                signal_plus_noise_figure,
                 demodulated_signal_figure
             )
 
