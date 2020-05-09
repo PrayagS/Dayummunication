@@ -37,10 +37,8 @@ def dashboard() -> dash.Dash:
 
     app.layout = html.Div(
         children=[
-            # html.H1(children="Title", style={"textAlign": "center", "margin": 20}),
-            dcc.Graph(id="signal"),
-            dcc.Graph(id="modulated-signal"),
-            dcc.Graph(id="noisy-mod-signal"),
+            html.H1(children="Title", style={
+                    "textAlign": "center", "margin": 20}),
             html.Div(
                 id="input",
                 children=[
@@ -54,15 +52,16 @@ def dashboard() -> dash.Dash:
                     ),
                 ],
             ),
+            dcc.Graph(id="signal"),
+            dcc.Graph(id="modulated-signal"),
+            dcc.Graph(id="modulated-signal-with-noise"),
+            dcc.Graph(id="demodulated-signal")
         ]
     )
 
     @app.callback(
-        [
-            Output("signal", "figure"),
-            Output("modulated-signal", "figure"),
-            Output("noisy-mod-signal", "figure"),
-        ],
+        [Output("signal", "figure"), Output("modulated-signal", "figure"),
+         Output("modulated-signal-with-noise", "figure"), Output("demodulated-signal", "figure")],
         [Input("submit-button-state", "n_clicks")],
         [State("input-str", "value")],
     )
@@ -76,17 +75,10 @@ def dashboard() -> dash.Dash:
 
             chars = [int(i) for i in list("".join(chars))]
 
-            mod = QPSK.modulate(chars)
-            symbols = np.array([chars[0::2], chars[1::2]])
-            print(symbols)
-
-            t_sym = np.linspace(
-                0,
-                np.size(symbols, axis=1) * Tb,
-                int(np.size(symbols, axis=1) * Tb * f_s),
-            )
-            t_sym = np.arange(0.0, np.size(symbols, axis=1) * 2.0 * t_c, t_s)
-            print(input_str, chars)
+            symbols, mod_signal = QPSK.modulate(chars)
+            t_sym, signal = QPSK.plot_modulated_signal(mod_signal, symbols)
+            mod_signal_with_noise, N0 = QPSK.add_noise(mod_signal)
+            demod_chars = QPSK.demodulate(mod_signal_with_noise)
             return (
                 {
                     "data": [dict(x=list(range(len(chars))), y=chars)],
@@ -97,7 +89,7 @@ def dashboard() -> dash.Dash:
                     },
                 },
                 {
-                    "data": [dict(x=t_sym, y=mod[2])],
+                    "data": [dict(x=t_sym, y=signal)],
                     "layout": {
                         "display": "block",
                         "margin-left": "auto",
@@ -105,13 +97,21 @@ def dashboard() -> dash.Dash:
                     },
                 },
                 {
-                    "data": [dict(x=t_sym, y=mod[3])],
+                    "data": [dict(x=t_sym, y=mod_signal_with_noise)],
                     "layout": {
                         "display": "block",
                         "margin-left": "auto",
                         "margin-right": "auto",
                     },
                 },
+                {
+                    "data": [dict(x=list(range(len(demod_chars))), y=demod_chars)],
+                    "layout": {
+                        "display": "block",
+                        "margin-left": "auto",
+                        "margin-right": "auto",
+                    },
+                }
             )
 
     return app
