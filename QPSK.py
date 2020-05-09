@@ -61,7 +61,7 @@ def modulate(msg: np.ndarray):
                          ] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
-    return modulated_signal
+    return symbols, modulated_signal
 
 
 def add_noise(signal):
