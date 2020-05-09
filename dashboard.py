@@ -6,6 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
 from dash.dependencies import Input, Output, State
+import plotly.graph_objects as go
 
 import BPSK
 import BFSK
@@ -149,6 +150,7 @@ def dashboard() -> dash.Dash:
             dcc.Graph(id="signal"),
             dcc.Graph(id="modulated-signal"),
             dcc.Graph(id="noise-signal"),
+            dcc.Graph(id="signal-plus-noise"),
             dcc.Graph(id="demodulated-signal"),
         ]
     )
@@ -158,6 +160,7 @@ def dashboard() -> dash.Dash:
             Output("signal", "figure"),
             Output("modulated-signal", "figure"),
             Output("noise-signal", "figure"),
+            Output("signal-plus-noise", "figure"),
             Output("demodulated-signal", "figure"),
         ],
         [
@@ -229,48 +232,37 @@ def dashboard() -> dash.Dash:
                     signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
+            binary_signal_figure = go.Figure()
+            binary_signal_figure.add_trace(go.Scatter(x=list(range(len(chars))), y=chars,
+                                                      mode="lines+markers"))
+            binary_signal_figure.update_layout(title="Binary Signal")
+
+            modulated_signal_figure = go.Figure()
+            modulated_signal_figure.add_trace(
+                go.Scatter(x=t, y=modulated_signal))
+            modulated_signal_figure.update_layout(title="Modulated Signal")
+
+            noise_signal_figure = go.Figure()
+            noise_signal_figure.add_trace(go.Scatter(x=t, y=noise_signal))
+            noise_signal_figure.update_layout(title="Noise Signal")
+
+            signal_plus_noise_figure = go.Figure()
+            signal_plus_noise_figure.add_trace(
+                go.Scatter(x=t, y=signal_plus_noise))
+            signal_plus_noise_figure.update_layout(
+                title="Modulated Signal + Noise Signal")
+
+            demodulated_signal_figure = go.Figure()
+            demodulated_signal_figure.add_trace(
+                go.Scatter(x=t, y=demodulated_signal))
+            demodulated_signal_figure.update_layout(title="Demodulated Signal")
+
             return (
-                {
-                    "data": [
-                        dict(x=list(range(len(chars))), y=chars),
-                        dict(x=list(range(len(chars))),
-                             y=chars, mode="markers"),
-                    ],
-                    "layout": {
-                        "display": "block",
-                        "margin-left": "auto",
-                        "margin-right": "auto",
-                    },
-                },
-                {
-                    "data": [dict(x=t, y=modulated_signal)],
-                    "layout": {
-                        "display": "block",
-                        "margin-left": "auto",
-                        "margin-right": "auto",
-                    },
-                },
-                {
-                    "data": [dict(x=t, y=signal_plus_noise)],
-                    "layout": {
-                        "display": "block",
-                        "margin-left": "auto",
-                        "margin-right": "auto",
-                    },
-                },
-                {
-                    "data": [
-                        dict(x=list(range(len(demodulated_signal))),
-                             y=demodulated_signal),
-                        dict(x=list(range(len(chars))),
-                             y=chars, mode="markers"),
-                    ],
-                    "layout": {
-                        "display": "block",
-                        "margin-left": "auto",
-                        "margin-right": "auto",
-                    },
-                },
+                binary_signal_figure,
+                modulated_signal_figure,
+                noise_signal_figure,
+                signal_plus_noise_figure,
+                demodulated_signal_figure
             )
 
     return app
