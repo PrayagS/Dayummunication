@@ -50,15 +50,13 @@ def modulate(msg: np.ndarray):
     I = A * np.cos(theta)  # in-phase component
     Q = A * np.sin(theta)  # quadrature component
 
-    modulated_signal = np.empty(
-        np.size(symbols, axis=1) * len(t), dtype="float")
+    modulated_signal = np.empty(np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     for k in range(np.size(symbols, axis=1)):
         # Calculates modulated signal for each symbol
         # Page 12, Lecture 16
-        modulated_signal[k * len(t): (k + 1) * len(t)
-                         ] = I[k] * phi_1 - Q[k] * phi_2
+        modulated_signal[k * len(t) : (k + 1) * len(t)] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
     return symbols, modulated_signal
@@ -85,8 +83,7 @@ def plot_signal(signal, symbols):
     # Time vector for symbols
     # t_sym = np.arange(0.0, np.size(symbols, axis=1)*2.0*t_c, t_s)
     t_sym = np.linspace(
-        0, np.size(symbols, axis=1) *
-        Tb, int(np.size(symbols, axis=1) * Tb * f_s)
+        0, np.size(symbols, axis=1) * Tb, int(np.size(symbols, axis=1) * Tb * f_s)
     )
 
     # plt.figure()

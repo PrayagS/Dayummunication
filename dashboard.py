@@ -37,8 +37,7 @@ def dashboard() -> dash.Dash:
 
     app.layout = html.Div(
         children=[
-            html.H1(children="Title", style={
-                    "textAlign": "center", "margin": 20}),
+            html.H1(children="Title", style={"textAlign": "center", "margin": 20}),
             html.Div(
                 id="input",
                 children=[
@@ -55,13 +54,17 @@ def dashboard() -> dash.Dash:
             dcc.Graph(id="signal"),
             dcc.Graph(id="modulated-signal"),
             dcc.Graph(id="modulated-signal-with-noise"),
-            dcc.Graph(id="demodulated-signal")
+            dcc.Graph(id="demodulated-signal"),
         ]
     )
 
     @app.callback(
-        [Output("signal", "figure"), Output("modulated-signal", "figure"),
-         Output("modulated-signal-with-noise", "figure"), Output("demodulated-signal", "figure")],
+        [
+            Output("signal", "figure"),
+            Output("modulated-signal", "figure"),
+            Output("modulated-signal-with-noise", "figure"),
+            Output("demodulated-signal", "figure"),
+        ],
         [Input("submit-button-state", "n_clicks")],
         [State("input-str", "value")],
     )
@@ -81,7 +84,10 @@ def dashboard() -> dash.Dash:
             demod_chars = QPSK.demodulate(mod_signal_with_noise)
             return (
                 {
-                    "data": [dict(x=list(range(len(chars))), y=chars)],
+                    "data": [
+                        dict(x=list(range(len(chars))), y=chars),
+                        dict(x=list(range(len(chars))), y=chars, mode="markers"),
+                    ],
                     "layout": {
                         "display": "block",
                         "margin-left": "auto",
@@ -105,13 +111,16 @@ def dashboard() -> dash.Dash:
                     },
                 },
                 {
-                    "data": [dict(x=list(range(len(demod_chars))), y=demod_chars)],
+                    "data": [
+                        dict(x=list(range(len(demod_chars))), y=demod_chars),
+                        dict(x=list(range(len(chars))), y=chars, mode="markers"),
+                    ],
                     "layout": {
                         "display": "block",
                         "margin-left": "auto",
                         "margin-right": "auto",
                     },
-                }
+                },
             )
 
     return app
