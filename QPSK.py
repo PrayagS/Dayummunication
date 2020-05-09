@@ -43,6 +43,7 @@ def modulate(msg):
         elif b_0 == 1 and b_1 == 0:
             theta[k] = np.math.pi / 4.0
             # theta[k] = 0
+
     # A = 1.0
     A = np.sqrt(Eb)
     I = A * np.cos(theta)  # in-phase component
@@ -59,8 +60,12 @@ def modulate(msg):
                          ] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
+    return modulated_signal
+
+
+def add_noise(signal):
     # Noise
-    ns = len(modulated_signal)
+    ns = len(signal)
     noise = np.random.normal(size=ns)
 
     f, psd = periodogram(noise, f_s)
@@ -71,14 +76,16 @@ def modulate(msg):
 
     psd_av = np.mean(psd)
     N0 = 2 * psd_av
-    modulated_signal += noise
-    print(N0)
+    signal_with_noise = signal + noise
+    return signal_with_noise, N0
 
+
+def demodulate(signal):
     t = np.linspace(0, Tb, int(Tb * f_s))
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
-    N = len(modulated_signal) // len(t)
-    split_modulated_signal = np.array_split(modulated_signal, N)
+    N = len(signal) // len(t)
+    split_modulated_signal = np.array_split(signal, N)
     received_symbols = [[] for i in range(2)]
     for i in split_modulated_signal:
         s_1 = i * phi_1
@@ -104,7 +111,7 @@ def modulate(msg):
         for j, _ in enumerate(received_symbols)
     ]
 
-    return received_msg, N0
+    return received_msg
 
 
 # def main() -> None:
@@ -165,5 +172,7 @@ def modulate(msg):
 
 if __name__ == "__main__":
     msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    received_msg, N0 = modulate(msg)
+    modulated_msg = modulate(msg)
+    msg_with_noise, N0 = add_noise(modulated_msg)
+    received_msg = demodulate(msg_with_noise)
     Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
