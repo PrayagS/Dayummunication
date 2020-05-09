@@ -18,11 +18,11 @@ def modulate(msg, Eb, Tb, f_c1, f_s):
             s = np.sqrt(2 * Eb / Tb) * np.cos(2 * np.pi * f_c2 * t)
         elif b_0 == 0 and b_1 == 1:
             s = np.sqrt(2 * Eb / Tb) * np.cos(2 * np.pi * f_c3 * t)
-        elif b_0 == 1 and b_1 == 0:
+        elif b_0 == 1 and b_1 == 1:
             s = np.sqrt(2 * Eb / Tb) * np.cos(2 * np.pi * f_c4 * t)
 
         signal.extend(s)
-        return np.array(signal)
+    return np.array(signal)
 
 
 def demodulate(signal, Tb, f_c1, f_s):
@@ -69,10 +69,11 @@ def demodulate(signal, Tb, f_c1, f_s):
         elif e20 > e17 and e20 > e18 and e20 > e19:
             decmsg.append(1)
             decmsg.append(1)
+    return decmsg
 
 
 def error_probabilities(msg, decoded_msg, Eb, N0):
-    Pe = (3 / 2) * np.exp(-Eb / (2 * N0))
+    Pe = (3 / 2) * np.exp(-Eb / (N0))
     Pb = 2 * Pe / 3
     Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)
     return Pe, Pb, Pb_pr

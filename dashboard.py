@@ -196,7 +196,7 @@ def dashboard() -> dash.Dash:
                 signal_plus_noise = modulated_signal + noise_signal
                 demodulated_signal = BPSK.demodulate(
                     signal_plus_noise, Tb, f_c, f_s)
-                t = np.linspace(0, len(chars) * Tb, len(chars) * Tb * f_s)
+                t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             if modulation_scheme == "BFSK":
                 modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
@@ -205,7 +205,7 @@ def dashboard() -> dash.Dash:
                 signal_plus_noise = modulated_signal + noise_signal
                 demodulated_signal = BFSK.demodulate(
                     signal_plus_noise, Tb, f_c, f_s)
-                t = np.linspace(0, len(chars) * Tb, len(chars) * Tb * f_s)
+                t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             if modulation_scheme == "QPSK":
                 modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
@@ -227,7 +227,7 @@ def dashboard() -> dash.Dash:
                 signal_plus_noise = modulated_signal + noise_signal
                 demodulated_signal = QFSK.demodulate(
                     signal_plus_noise, Tb, f_c, f_s)
-                t = np.linspace(0, len(chars) * Tb, len(chars) * Tb * f_s)
+                t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             return (
                 {

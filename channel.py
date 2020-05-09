@@ -1,4 +1,5 @@
-import numpy as np 
+import numpy as np
+
 
 def generate_noise(signal, N0, f_s):
     N0_unit_power = 0.0004
