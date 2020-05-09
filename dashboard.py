@@ -20,7 +20,7 @@ external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 colors = {"background": "#111111", "text": "#7FDBFF", "options": "orange"}
 
 palatte = {
-    "A": "#001233",
+    "A": "#001845",
     "B": "#33415c",
     "C": "#5c677d",
     "D": "#7d8597",
