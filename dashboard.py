@@ -5,16 +5,16 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
-from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
+from dash.dependencies import Input, Output, State
 from plotly.subplots import make_subplots
 
-import BPSK
 import BFSK
-import QPSK
-import QFSK
-import MPSK
+import BPSK
 import channel
+import MPSK
+import QFSK
+import QPSK
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
@@ -44,10 +44,13 @@ def dashboard() -> dash.Dash:
 
     app.layout = html.Div(
         children=[
-            html.H1(children="Dayummunication", style={
-                    "textAlign": "center", "margin": 10}),
-            html.H5(children="Making digital communications look dayumm!", style={
-                    "textAlign": "center", "margin": 10}),
+            html.H1(
+                children="Dayummunication", style={"textAlign": "center", "margin": 10}
+            ),
+            html.H5(
+                children="Making digital communications look dayumm!",
+                style={"textAlign": "center", "margin": 10},
+            ),
             html.Hr(),
             html.Div(
                 id="modulation-type",
@@ -59,72 +62,67 @@ def dashboard() -> dash.Dash:
                     dcc.Dropdown(
                         id="modulation-scheme",
                         options=[
-                            {"label": "Binary Phase Shift Keying (BPSK)",
-                             "value": "BPSK"},
-                            {"label": "Binary Frequency Shift Keying (BFSK)",
-                             "value": "BFSK"},
-                            {"label": "Quadrature Phase Shift Keying (QPSK)",
-                             "value": "QPSK"},
-                            {"label": "Quadrature Frequency Shift Keying (QFSK)",
-                             "value": "QFSK"},
-                            {"label": "M'ary Phase Shift Keying (MPSK)",
-                             "value": "MPSK"},
+                            {
+                                "label": "Binary Phase Shift Keying (BPSK)",
+                                "value": "BPSK",
+                            },
+                            {
+                                "label": "Binary Frequency Shift Keying (BFSK)",
+                                "value": "BFSK",
+                            },
+                            {
+                                "label": "Quadrature Phase Shift Keying (QPSK)",
+                                "value": "QPSK",
+                            },
+                            {
+                                "label": "Quadrature Frequency Shift Keying (QFSK)",
+                                "value": "QFSK",
+                            },
+                            {
+                                "label": "M'ary Phase Shift Keying (MPSK)",
+                                "value": "MPSK",
+                            },
                         ],
                         placeholder="For eg. BPSK",
                         value="BPSK",
-                        style={
-                            "margin": 5
-                        }
+                        style={"margin": 5},
                     ),
-                ]
+                ],
             ),
             html.Div(
                 id="modulation-params",
                 children=[
                     html.Label("Energy of the signal"),
                     dcc.Input(
-                        id="energy",
-                        value=0.001,
-                        type="number",
-                        style={
-                            "margin": 5
-                        }),
+                        id="energy", value=0.001, type="number", style={"margin": 5}
+                    ),
                     html.Label("Bit time"),
                     dcc.Input(
-                        id="bit-time",
-                        value=0.01,
-                        type="number",
-                        style={
-                            "margin": 5
-                        }),
+                        id="bit-time", value=0.01, type="number", style={"margin": 5}
+                    ),
                     html.Label("Carrier Frequency"),
                     dcc.Input(
                         id="carrier-frequency",
                         value=100,
                         type="number",
-                        style={
-                            "margin": 5
-                        }),
+                        style={"margin": 5},
+                    ),
                     html.Label("Sampling Frequency"),
                     dcc.Input(
                         id="sampling-frequency",
                         value=10000,
                         type="number",
-                        style={
-                            "margin": 5
-                        }),
+                        style={"margin": 5},
+                    ),
                     html.Label("Noise Energy"),
                     dcc.Input(
                         id="noise-energy",
                         value=0.000004,
                         type="number",
-                        style={
-                            "margin": 5
-                        }),
+                        style={"margin": 5},
+                    ),
                 ],
-                style={
-                    "columnCount": 3
-                }
+                style={"columnCount": 3},
             ),
             html.Div(
                 id="input",
@@ -134,17 +132,13 @@ def dashboard() -> dash.Dash:
                         style={"margin": 5, "textAlign": "left"},
                     ),
                     dcc.Input(
-                        id="input-str",
-                        value="0",
-                        type="text",
-                        style={
-                            "margin": 5
-                        }),
+                        id="input-str", value="0", type="text", style={"margin": 5}
+                    ),
                     html.Button(
-                        id="submit-button-state", n_clicks=0, children="Submit",
-                        style={
-                            "margin": 5
-                        },
+                        id="submit-button-state",
+                        n_clicks=0,
+                        children="Submit",
+                        style={"margin": 5},
                     ),
                 ],
             ),
@@ -173,9 +167,16 @@ def dashboard() -> dash.Dash:
         ],
         [State("input-str", "value")],
     )
-    def conv(n_clicks: int,
-             modulation_scheme: str, Eb: int, Tb: int, f_c: int, f_s: int, N0: str,
-             input_str: str) -> None:
+    def conv(
+        n_clicks: int,
+        modulation_scheme: str,
+        Eb: int,
+        Tb: int,
+        f_c: int,
+        f_s: int,
+        N0: str,
+        input_str: str,
+    ) -> tuple:
         if n_clicks >= 0:
 
             chars = []
@@ -193,72 +194,65 @@ def dashboard() -> dash.Dash:
 
             if modulation_scheme == "BPSK":
                 modulated_signal = BPSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = BPSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = BPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             if modulation_scheme == "BFSK":
                 modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = BFSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = BFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             if modulation_scheme == "QPSK":
                 modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = QPSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = QPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 symbols = np.array([chars[0::2], chars[1::2]])
                 t = np.linspace(
-                    0, np.size(symbols, axis=1) *
-                    Tb, int(np.size(symbols, axis=1) * Tb * f_s)
+                    0,
+                    np.size(symbols, axis=1) * Tb,
+                    int(np.size(symbols, axis=1) * Tb * f_s),
                 )
 
             if modulation_scheme == "QFSK":
                 modulated_signal = QFSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = QFSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = QFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             binary_signal_figure = go.Figure()
-            binary_signal_figure.add_trace(go.Scatter(x=list(range(len(chars))), y=chars,
-                                                      mode="lines+markers"))
+            binary_signal_figure.add_trace(
+                go.Scatter(x=list(range(len(chars))), y=chars, mode="lines+markers")
+            )
             binary_signal_figure.update_layout(title="Binary Signal")
 
             modulated_signal_figure = go.Figure()
-            modulated_signal_figure.add_trace(
-                go.Scatter(x=t, y=modulated_signal))
+            modulated_signal_figure.add_trace(go.Scatter(x=t, y=modulated_signal))
             modulated_signal_figure.update_layout(title="Modulated Signal")
 
             noise_signal_figure = make_subplots(rows=1, cols=2)
+            noise_signal_figure.add_trace(go.Scatter(x=t, y=noise_signal), row=1, col=1)
             noise_signal_figure.add_trace(
-                go.Scatter(x=t, y=noise_signal), row=1, col=1)
-            noise_signal_figure.add_trace(go.Scatter(
-                x=t, y=signal_plus_noise), row=1, col=2)
+                go.Scatter(x=t, y=signal_plus_noise), row=1, col=2
+            )
             noise_signal_figure.update_layout(
-                title="Noise Signal and Modulation Signal + Noise Signal")
+                title="Noise Signal and Modulation Signal + Noise Signal"
+            )
 
             demodulated_signal_figure = go.Figure()
-            demodulated_signal_figure.add_trace(
-                go.Scatter(x=t, y=demodulated_signal))
+            demodulated_signal_figure.add_trace(go.Scatter(x=t, y=demodulated_signal))
             demodulated_signal_figure.update_layout(title="Demodulated Signal")
 
             return (
                 binary_signal_figure,
                 modulated_signal_figure,
                 noise_signal_figure,
-                demodulated_signal_figure
+                demodulated_signal_figure,
             )
 
     return app
