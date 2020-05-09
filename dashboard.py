@@ -19,6 +19,14 @@ import QPSK
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 colors = {"background": "#111111", "text": "#7FDBFF", "options": "orange"}
 
+palatte = {
+    "A": "#001233",
+    "B": "#33415c",
+    "C": "#5c677d",
+    "D": "#7d8597",
+    "E": "#979dac",
+}
+
 
 def dashboard() -> dash.Dash:
     """Loading the model and application"""
@@ -51,13 +59,11 @@ def dashboard() -> dash.Dash:
         children=[
             html.H1(
                 children="Dayummunication",
-                style={"textAlign": "center",
-                       "margin": 10, "color": colors["text"]},
+                style={"textAlign": "center", "margin": 10, "color": colors["text"]},
             ),
             html.H5(
                 children="Making digital communications look dayumm!",
-                style={"textAlign": "center",
-                       "margin": 10, "color": colors["text"]},
+                style={"textAlign": "center", "margin": 10, "color": colors["text"]},
             ),
             html.Hr(),
             html.Div(
@@ -120,8 +126,7 @@ def dashboard() -> dash.Dash:
                         type="number",
                         style={"margin": 5, "color": "white"},
                     ),
-                    html.Label("Carrier Frequency", style={
-                               "color": colors["options"]}),
+                    html.Label("Carrier Frequency", style={"color": colors["options"]}),
                     dcc.Input(
                         id="carrier-frequency",
                         value=100,
@@ -137,8 +142,7 @@ def dashboard() -> dash.Dash:
                         type="number",
                         style={"margin": 5, "color": "white"},
                     ),
-                    html.Label("Noise Energy", style={
-                               "color": colors["options"]}),
+                    html.Label("Noise Energy", style={"color": colors["options"]}),
                     dcc.Input(
                         id="noise-energy",
                         value=0.000004,
@@ -225,29 +229,23 @@ def dashboard() -> dash.Dash:
 
             if modulation_scheme == "BPSK":
                 modulated_signal = BPSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = BPSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = BPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             if modulation_scheme == "BFSK":
                 modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = BFSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = BFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             if modulation_scheme == "QPSK":
                 modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = QPSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = QPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 symbols = np.array([chars[0::2], chars[1::2]])
                 t = np.linspace(
                     0,
@@ -257,49 +255,46 @@ def dashboard() -> dash.Dash:
 
             if modulation_scheme == "QFSK":
                 modulated_signal = QFSK.modulate(chars, Eb, Tb, f_c, f_s)
-                noise_signal = channel.generate_noise(
-                    modulated_signal, N0, f_s)
+                noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
                 signal_plus_noise = modulated_signal + noise_signal
-                demodulated_signal = QFSK.demodulate(
-                    signal_plus_noise, Tb, f_c, f_s)
+                demodulated_signal = QFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
                 t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
             binary_signal_figure = go.Figure()
             binary_signal_figure.add_trace(
-                go.Scatter(x=list(range(len(chars))),
-                           y=chars, mode="lines+markers")
+                go.Scatter(x=list(range(len(chars))), y=chars, mode="lines+markers")
             )
             binary_signal_figure.update_layout(
-                title="Binary Signal", paper_bgcolor="lightsteelblue",
+                title="Binary Signal",
+                paper_bgcolor=palatte["A"],
+                font=dict(color=palatte["E"], size=14),
             )
 
             modulated_signal_figure = go.Figure()
-            modulated_signal_figure.add_trace(
-                go.Scatter(x=t, y=modulated_signal))
+            modulated_signal_figure.add_trace(go.Scatter(x=t, y=modulated_signal))
             modulated_signal_figure.update_layout(
-                title="Modulated Signal", paper_bgcolor="lightsteelblue",
-                font=dict(
-                    size=14,
-                    color="#00ff55",
-                )
+                title="Modulated Signal",
+                paper_bgcolor=palatte["A"],
+                font=dict(color=palatte["E"], size=14),
             )
 
             noise_signal_figure = make_subplots(rows=1, cols=2)
-            noise_signal_figure.add_trace(
-                go.Scatter(x=t, y=noise_signal), row=1, col=1)
+            noise_signal_figure.add_trace(go.Scatter(x=t, y=noise_signal), row=1, col=1)
             noise_signal_figure.add_trace(
                 go.Scatter(x=t, y=signal_plus_noise), row=1, col=2
             )
             noise_signal_figure.update_layout(
                 title="Noise Signal and Modulation Signal + Noise Signal",
-                paper_bgcolor="lightsteelblue",
+                paper_bgcolor=palatte["A"],
+                font=dict(color=palatte["E"], size=14),
             )
 
             demodulated_signal_figure = go.Figure()
-            demodulated_signal_figure.add_trace(
-                go.Scatter(x=t, y=demodulated_signal))
+            demodulated_signal_figure.add_trace(go.Scatter(x=t, y=demodulated_signal))
             demodulated_signal_figure.update_layout(
-                title="Demodulated Signal", paper_bgcolor="lightsteelblue",
+                title="Demodulated Signal",
+                paper_bgcolor=palatte["A"],
+                font=dict(color=palatte["E"], size=14),
             )
 
             return (
