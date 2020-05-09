@@ -6,18 +6,18 @@ import numpy as np
 from scipy.stats import norm
 
 # Carrier signal
-f_c = 100.0
-t_c = 1.0 / f_c
+# f_c = 100.0
+# t_c = 1.0 / f_c
 
 # Sampling rate
-f_s = 10000.0
-t_s = 1.0 / f_s
+# f_s = 10000.0
+# t_s = 1.0 / f_s
 
 # BPSK Parameters
-Tb = 0.01
-Eb = 0.001
+# Tb = 0.01
+# Eb = 0.001
 
-def modulate(msg):
+def modulate(msg, Eb, Tb, f_c, f_s):
     modulated_signal = []
     t = np.linspace(0, Tb, Tb*f_s)
     for i in msg:
@@ -40,7 +40,7 @@ def modulate(msg):
 #     signal_with_noise = signal + noise
 #     return signal_with_noise
 
-def demodulate(signal):
+def demodulate(signal, Tb, f_c, f_s):
     t = np.linspace(0, Tb, Tb*f_s)
     phi = np.sqrt(2/Tb)*np.sin(2*np.pi*f_c*t)
     N = len(signal) // len(t)
@@ -55,7 +55,7 @@ def demodulate(signal):
             received_msg.append(0)
     return received_msg
 
-def error_probabilities(msg, decoded_msg, N0):
+def error_probabilities(msg, decoded_msg, Eb, N0):
     Pb = norm.sf(np.sqrt(2*Eb/N0))
     # print('Theoretical Bit Error Probability:', Pb)
     Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)

@@ -7,19 +7,19 @@ from scipy.stats import norm
 from MPSK import error_probabilities
 
 # Carrier signal
-f_c = 100.0
-t_c = 1.0 / f_c
+# f_c = 100.0
+# t_c = 1.0 / f_c
 
 # Sampling rate
-f_s = 10000.0
-t_s = 1.0 / f_s
+# f_s = 10000.0
+# t_s = 1.0 / f_s
 
 # QPSK Parameters
-Tb = 0.01
-Eb = 0.001
+# Tb = 0.01
+# Eb = 0.001
 
 
-def modulate(msg):
+def modulate(msg, Eb, Tb, f_c, f_s):
     # Time vector
     # t = np.arange(0.0, t_c, t_s)
     t = np.linspace(0.0, Tb, int(Tb * f_s))
@@ -63,24 +63,24 @@ def modulate(msg):
     return modulated_signal
 
 
-def add_noise(signal):
-    # Noise
-    ns = len(signal)
-    noise = np.random.normal(size=ns)
+# def add_noise(signal, f_s):
+#     # Noise
+#     ns = len(signal)
+#     noise = np.random.normal(size=ns)
 
-    f, psd = periodogram(noise, f_s)
+#     f, psd = periodogram(noise, f_s)
 
-    # fig, ax = plt.subplots(2,1)
-    # ax[0].plot(noise)
-    # ax[1].plot(f, psd)
+#     # fig, ax = plt.subplots(2,1)
+#     # ax[0].plot(noise)
+#     # ax[1].plot(f, psd)
 
-    psd_av = np.mean(psd)
-    N0 = 2 * psd_av
-    signal_with_noise = signal + noise
-    return signal_with_noise, N0
+#     psd_av = np.mean(psd)
+#     N0 = 2 * psd_av
+#     signal_with_noise = signal + noise
+#     return signal_with_noise, N0
 
 
-def demodulate(signal):
+def demodulate(signal, Tb, f_c, f_s):
     t = np.linspace(0, Tb, int(Tb * f_s))
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
@@ -171,8 +171,9 @@ def demodulate(signal):
 
 
 if __name__ == "__main__":
-    msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    modulated_msg = modulate(msg)
-    msg_with_noise, N0 = add_noise(modulated_msg)
-    received_msg = demodulate(msg_with_noise)
-    Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
+    pass
+    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
+    # modulated_msg = modulate(msg)
+    # msg_with_noise, N0 = add_noise(modulated_msg)
+    # received_msg = demodulate(msg_with_noise)
+    # Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
