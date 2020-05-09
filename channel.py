@@ -1,5 +1,4 @@
 import numpy as np 
-from scipy.signal import periodogram
 
 def generate_noise(signal, N0, f_s):
     N0_unit_power = 0.0004
