@@ -17,12 +17,17 @@ import QFSK
 import QPSK
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
+colors = {"background": "#111111", "text": "#7FDBFF", "options": "orange"}
 
 
 def dashboard() -> dash.Dash:
     """Loading the model and application"""
 
-    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+    app = dash.Dash(
+        __name__,
+        external_stylesheets=external_stylesheets,
+        meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+    )
     # msg = np.array(
     #     [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0]
     # )  # 8PSK demo signal
@@ -45,11 +50,12 @@ def dashboard() -> dash.Dash:
     app.layout = html.Div(
         children=[
             html.H1(
-                children="Dayummunication", style={"textAlign": "center", "margin": 10}
+                children="Dayummunication",
+                style={"textAlign": "center", "margin": 10, "color": colors["text"]},
             ),
             html.H5(
                 children="Making digital communications look dayumm!",
-                style={"textAlign": "center", "margin": 10},
+                style={"textAlign": "center", "margin": 10, "color": colors["text"]},
             ),
             html.Hr(),
             html.Div(
@@ -57,7 +63,11 @@ def dashboard() -> dash.Dash:
                 children=[
                     html.H2(
                         children="Modulation Scheme",
-                        style={"margin": 5, "textAlign": "left"},
+                        style={
+                            "margin": 5,
+                            "textAlign": "left",
+                            "color": colors["text"],
+                        },
                     ),
                     dcc.Dropdown(
                         id="modulation-scheme",
@@ -85,41 +95,51 @@ def dashboard() -> dash.Dash:
                         ],
                         placeholder="For eg. BPSK",
                         value="BPSK",
-                        style={"margin": 5},
+                        style={"margin": 5, "color": "white"},
                     ),
                 ],
             ),
             html.Div(
                 id="modulation-params",
                 children=[
-                    html.Label("Energy of the signal"),
-                    dcc.Input(
-                        id="energy", value=0.001, type="number", style={"margin": 5}
+                    html.Label(
+                        "Energy of the signal", style={"color": colors["options"]}
                     ),
-                    html.Label("Bit time"),
                     dcc.Input(
-                        id="bit-time", value=0.01, type="number", style={"margin": 5}
+                        id="energy",
+                        value=0.001,
+                        type="number",
+                        style={"margin": 5, "color": "white"},
                     ),
-                    html.Label("Carrier Frequency"),
+                    html.Label("Bit time", style={"color": colors["options"]}),
+                    dcc.Input(
+                        id="bit-time",
+                        value=0.01,
+                        type="number",
+                        style={"margin": 5, "color": "white"},
+                    ),
+                    html.Label("Carrier Frequency", style={"color": colors["options"]}),
                     dcc.Input(
                         id="carrier-frequency",
                         value=100,
                         type="number",
-                        style={"margin": 5},
+                        style={"margin": 5, "color": "white"},
                     ),
-                    html.Label("Sampling Frequency"),
+                    html.Label(
+                        "Sampling Frequency", style={"color": colors["options"]}
+                    ),
                     dcc.Input(
                         id="sampling-frequency",
                         value=10000,
                         type="number",
-                        style={"margin": 5},
+                        style={"margin": 5, "color": "white"},
                     ),
-                    html.Label("Noise Energy"),
+                    html.Label("Noise Energy", style={"color": colors["options"]}),
                     dcc.Input(
                         id="noise-energy",
                         value=0.000004,
                         type="number",
-                        style={"margin": 5},
+                        style={"margin": 5, "color": "white"},
                     ),
                 ],
                 style={"columnCount": 3},
@@ -129,20 +149,27 @@ def dashboard() -> dash.Dash:
                 children=[
                     html.H2(
                         children="Input Signal",
-                        style={"margin": 5, "textAlign": "left"},
+                        style={
+                            "margin": 5,
+                            "textAlign": "left",
+                            "color": colors["text"],
+                        },
                     ),
                     dcc.Input(
-                        id="input-str", value="0", type="text", style={"margin": 5}
+                        id="input-str",
+                        value="0",
+                        type="text",
+                        style={"margin": 5, "color": "white"},
                     ),
                     html.Button(
                         id="submit-button-state",
                         n_clicks=0,
                         children="Submit",
-                        style={"margin": 5},
+                        style={"margin": 5, "color": "white"},
                     ),
                 ],
             ),
-            dcc.Graph(id="signal"),
+            dcc.Graph(id="signal",),
             dcc.Graph(id="modulated-signal"),
             dcc.Graph(id="noise-signal"),
             dcc.Graph(id="demodulated-signal"),
@@ -229,11 +256,15 @@ def dashboard() -> dash.Dash:
             binary_signal_figure.add_trace(
                 go.Scatter(x=list(range(len(chars))), y=chars, mode="lines+markers")
             )
-            binary_signal_figure.update_layout(title="Binary Signal")
+            binary_signal_figure.update_layout(
+                title="Binary Signal", paper_bgcolor="lightsteelblue",
+            )
 
             modulated_signal_figure = go.Figure()
             modulated_signal_figure.add_trace(go.Scatter(x=t, y=modulated_signal))
-            modulated_signal_figure.update_layout(title="Modulated Signal")
+            modulated_signal_figure.update_layout(
+                title="Modulated Signal", paper_bgcolor="lightsteelblue",
+            )
 
             noise_signal_figure = make_subplots(rows=1, cols=2)
             noise_signal_figure.add_trace(go.Scatter(x=t, y=noise_signal), row=1, col=1)
@@ -241,12 +272,15 @@ def dashboard() -> dash.Dash:
                 go.Scatter(x=t, y=signal_plus_noise), row=1, col=2
             )
             noise_signal_figure.update_layout(
-                title="Noise Signal and Modulation Signal + Noise Signal"
+                title="Noise Signal and Modulation Signal + Noise Signal",
+                paper_bgcolor="lightsteelblue",
             )
 
             demodulated_signal_figure = go.Figure()
             demodulated_signal_figure.add_trace(go.Scatter(x=t, y=demodulated_signal))
-            demodulated_signal_figure.update_layout(title="Demodulated Signal")
+            demodulated_signal_figure.update_layout(
+                title="Demodulated Signal", paper_bgcolor="lightsteelblue",
+            )
 
             return (
                 binary_signal_figure,
