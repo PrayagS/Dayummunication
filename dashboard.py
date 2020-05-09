@@ -76,7 +76,7 @@ def dashboard() -> dash.Dash:
             chars = [int(i) for i in list("".join(chars))]
 
             symbols, mod_signal = QPSK.modulate(chars)
-            t_sym, signal = QPSK.plot_modulated_signal(mod_signal, symbols)
+            t_sym, signal = QPSK.plot_signal(mod_signal, symbols)
             mod_signal_with_noise, N0 = QPSK.add_noise(mod_signal)
             demod_chars = QPSK.demodulate(mod_signal_with_noise)
             return (
