@@ -219,14 +219,9 @@ app.layout = html.Div(
                 ],
             ),
             html.Hr(),
-            dcc.Graph(id="signal",),
-            dcc.Graph(id="modulated-signal"),
-            dbc.Row(children=[
-                dbc.Col(dcc.Graph(id="noise"), md=12, lg=6),
-                dbc.Col(dcc.Graph(id="noise-signal"),
-                        md=12, lg=6),
-            ]),
-            dcc.Graph(id="demodulated-signal"),
+            html.Div(id='container'),
+            html.Div(dcc.Graph(id='empty', figure={
+                'data': []}), style={'display': 'none'}),
             html.Hr(),
             html.H2('Bit Error Rate'),
             dbc.Row(children=[
@@ -253,6 +248,14 @@ app.layout = html.Div(
                             ),
                 ], md=6),
             ]),
+            # dcc.Graph(id="signal",),
+            # dcc.Graph(id="modulated-signal"),
+            # dbc.Row(children=[
+            # dbc.Col(dcc.Graph(id="noise"), md=12, lg=6),
+            # dbc.Col(dcc.Graph(id="noise-signal"),
+            # md=12, lg=6),
+            # ]),
+            # dcc.Graph(id="demodulated-signal"),
         ], fluid=True
         ),
     ],
@@ -260,15 +263,14 @@ app.layout = html.Div(
 
 
 @app.callback(
-    [
-        Output("signal", "figure"),
-        Output("modulated-signal", "figure"),
-        Output("noise", "figure"),
-        Output("noise-signal", "figure"),
-        Output("demodulated-signal", "figure"),
-        Output("ber-theoretical", "children"),
-        Output("ber-practical", "children"),
-    ],
+    (
+        # Output("signal", "figure"),
+        # Output("modulated-signal", "figure"),
+        # Output("noise", "figure"),
+        # Output("noise-signal", "figure"),
+        # Output("demodulated-signal", "figure"),
+        Output("container", "children")
+    ),
     [
         Input("submit-button-state", "n_clicks"),
         Input("coding-flag", "value"),
@@ -314,9 +316,50 @@ def conv(
         ber_theoretical = 0
         ber_practical = 0
 
+        graphs = []
+
+        binary_signal_figure = go.Figure()
+        binary_signal_figure.add_trace(
+            go.Scatter(
+                x=list(range(len(chars))),
+                y=chars,
+                mode="lines+markers",
+                marker=dict(color="#4ecca3"),
+            )
+        )
+        binary_signal_figure.update_layout(
+            title="Binary Signal",
+            paper_bgcolor=palatte["A"],
+            font=dict(color=palatte["E"], size=14),
+            template="plotly_dark",
+        )
+        graphs.append(dcc.Graph(
+            id="signal",
+            figure=binary_signal_figure
+        ))
+
         try:
             if coding_flag[0] == "True":
                 chars = Coding.encodebits(chars)
+                encoded_binary_signal_figure = go.Figure()
+                encoded_binary_signal_figure.add_trace(
+                    go.Scatter(
+                        x=list(range(len(chars))),
+                        y=chars,
+                        mode="lines+markers",
+                        marker=dict(color="#4ecca3"),
+                    )
+                )
+                encoded_binary_signal_figure.update_layout(
+                    title="Encoded Binary Signal",
+                    paper_bgcolor=palatte["A"],
+                    font=dict(color=palatte["E"], size=14),
+                    template="plotly_dark",
+                )
+                graphs.append(dcc.Graph(
+                    id="encoded-signal",
+                    figure=encoded_binary_signal_figure
+                ))
         except (TypeError, IndexError):
             pass
 
@@ -362,7 +405,8 @@ def conv(
             demodulated_signal = QFSK.demodulate(
                 signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
-            ser, ber_theoretical, ber_practical = QFSK.error_probabilities(chars, demodulated_signal, Eb, N0)
+            ser, ber_theoretical, ber_practical = QFSK.error_probabilities(
+                chars, demodulated_signal, Eb, N0)
         try:
             if coding_flag[0] == "True":
                 demodulated_signal = Coding.decodebits(demodulated_signal)
@@ -395,6 +439,10 @@ def conv(
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
         )
+        graphs.append(dcc.Graph(
+            id="modulated-signal",
+            figure=modulated_signal_figure
+        ))
 
         noise_figure = go.Figure()
         noise_figure.add_trace(
@@ -425,6 +473,11 @@ def conv(
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
         )
+        graphs.append(dbc.Row(children=[
+            dbc.Col(dcc.Graph(id="noise", figure=noise_figure), md=12, lg=6),
+            dbc.Col(dcc.Graph(id="noise-signal", figure=noise_signal_figure),
+                    md=12, lg=6),
+        ]),)
 
         demodulated_signal_figure = go.Figure()
         demodulated_signal_figure.add_trace(
@@ -437,15 +490,70 @@ def conv(
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
         )
+        graphs.append(dcc.Graph(
+            id="demodulated-signal",
+            figure=demodulated_signal_figure
+        ))
 
-        return (
-            binary_signal_figure,
-            modulated_signal_figure,
-            noise_figure,
-            noise_signal_figure,
-            demodulated_signal_figure,
-            ber_theoretical, ber_practical,
-        )
+        try:
+            if coding_flag[0] == "True":
+                decoded_signal = Coding.decodebits(demodulated_signal)
+                decoded_signal_figure = go.Figure()
+                decoded_signal_figure.add_trace(
+                    go.Scatter(x=t, y=decoded_signal,
+                               marker=dict(color="#4ecca3")),
+                )
+                decoded_signal_figure.update_layout(
+                    title="Decoded Signal",
+                    paper_bgcolor=palatte["A"],
+                    font=dict(color=palatte["E"], size=14),
+                    template="plotly_dark",
+                )
+                graphs.append(dcc.Graph(
+                    id="decoded-signal",
+                    figure=decoded_signal_figure
+                ))
+        except (TypeError, IndexError):
+            pass
+
+        # return (
+        #     binary_signal_figure,
+        #     modulated_signal_figure,
+        #     noise_figure,
+        #     noise_signal_figure,
+        #     demodulated_signal_figure,
+        # )
+        return html.Div(graphs)
+
+
+# @app.callback(Output('container', 'children'), [Input('submit-button-state', 'n_clicks')])
+# def display_graphs(n_clicks):
+#     graphs = []
+#     if n_clicks >= 0:
+#         chars = [0, 1, 0, 0, 1, 1, 0, 1, 1, 0]
+#         binary_signal_figure = go.Figure()
+#         binary_signal_figure.add_trace(
+#             go.Scatter(
+#                 x=list(range(len(chars))),
+#                 y=chars,
+#                 mode="lines+markers",
+#                 marker=dict(color="#4ecca3"),
+#             )
+#         )
+#         binary_signal_figure.update_layout(
+#             title="Binary Signal",
+#             template="plotly_dark",
+#         )
+#         graphs.append(dcc.Graph(
+#             id="GG",
+#             figure=binary_signal_figure
+#         ))
+#         graphs.append(dcc.Graph(
+#             id="GG2",
+#             figure=binary_signal_figure
+#         ))
+#     print(type(html.Div(graphs)))
+#     return html.Div(graphs)
 
 
 if __name__ == "__main__":
