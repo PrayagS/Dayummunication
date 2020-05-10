@@ -5,6 +5,7 @@ from typing import Tuple
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output, State
@@ -17,7 +18,8 @@ import MPSK
 import QFSK
 import QPSK
 
-external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
+external_stylesheets = [dbc.themes.BOOTSTRAP,
+                        "https://codepen.io/chriddyp/pen/bWLwgP.css"]
 colors = {"background": "#0e0e0e", "text": "#4ecca3", "options": "#fc7e2f"}
 
 palatte = {
@@ -53,116 +55,152 @@ Eb = 0.001
 app.layout = html.Div(
     style={"backgroundColor": colors["background"]},
     children=[
-        html.H1(
-            children="Dayummunication",
-            style={"textAlign": "center", "margin": 10, "color": colors["text"]},
-        ),
-        html.H5(
-            children="Making digital communications look dayumm!",
-            style={"textAlign": "center", "margin": 10, "color": colors["text"]},
-        ),
-        html.Hr(),
-        html.Div(
-            id="modulation-type",
-            children=[
-                html.H2(
-                    children="Modulation Scheme",
-                    style={"margin": 5, "textAlign": "left", "color": colors["text"],},
+        dbc.Container(
+            [
+                html.H1(
+                    children="Dayummunication",
+                    style={"textAlign": "center",
+                           "margin": 10, "color": colors["text"]},
                 ),
-                dcc.Dropdown(
-                    id="modulation-scheme",
-                    options=[
-                        {"label": "Binary Phase Shift Keying (BPSK)", "value": "BPSK",},
-                        {
-                            "label": "Binary Frequency Shift Keying (BFSK)",
-                            "value": "BFSK",
-                        },
-                        {
-                            "label": "Quadrature Phase Shift Keying (QPSK)",
-                            "value": "QPSK",
-                        },
-                        {
-                            "label": "Quadrature Frequency Shift Keying (QFSK)",
-                            "value": "QFSK",
-                        },
-                        # {
-                        #     "label": "M'ary Phase Shift Keying (MPSK)",
-                        #     "value": "MPSK",
-                        # },
+                html.H5(
+                    children="Making digital communications look dayumm!",
+                    style={"textAlign": "center",
+                           "margin": 10, "color": colors["text"]},
+                ),
+                html.Hr(),
+                html.Div(
+                    id="modulation-type",
+                    children=[
+                        html.H2(
+                            children="Modulation Scheme",
+                            style={"margin": 5, "textAlign": "left",
+                                   "color": colors["text"], },
+                        ),
+                        dcc.Dropdown(
+                            id="modulation-scheme",
+                            options=[
+                                {"label": "Binary Phase Shift Keying (BPSK)",
+                                 "value": "BPSK", },
+                                {
+                                    "label": "Binary Frequency Shift Keying (BFSK)",
+                                    "value": "BFSK",
+                                },
+                                {
+                                    "label": "Quadrature Phase Shift Keying (QPSK)",
+                                    "value": "QPSK",
+                                },
+                                {
+                                    "label": "Quadrature Frequency Shift Keying (QFSK)",
+                                    "value": "QFSK",
+                                },
+                                # {
+                                #     "label": "M'ary Phase Shift Keying (MPSK)",
+                                #     "value": "MPSK",
+                                # },
+                            ],
+                            placeholder="For eg. BPSK",
+                            value="BPSK",
+                            style={"margin": 5, "color": "white"},
+                        ),
                     ],
-                    placeholder="For eg. BPSK",
-                    value="BPSK",
-                    style={"margin": 5, "color": "white"},
                 ),
-            ],
+
+            ], fluid=True
         ),
-        html.Div(
+        dbc.Container(
             id="modulation-params",
             children=[
-                html.Label("Energy of the signal", style={"color": colors["options"]}),
-                dcc.Input(
-                    id="energy",
-                    value=0.001,
-                    type="number",
-                    style={"margin": 5, "color": "white"},
+                dbc.Row(
+                    children=[
+                        dbc.Col(children=[
+                            html.Label("Energy of the signal", style={
+                                "color": colors["options"]}),
+                            dcc.Input(
+                                id="energy",
+                                value=0.001,
+                                type="number",
+                                style={"color": "white"},
+                            ),
+                        ], sm=6, md=4, lg=3
+                        ),
+                        dbc.Col([html.Label("Bit time", style={"color": colors["options"]}),
+                                 dcc.Input(
+                            id="bit-time",
+                            value=0.01,
+                            type="number",
+                            style={"color": "white"},
+                        ),
+                        ], sm=6, md=4, lg=3
+                        ),
+                        dbc.Col([html.Label("Carrier Frequency", style={
+                            "color": colors["options"]}),
+                            dcc.Input(
+                            id="carrier-frequency",
+                            value=100,
+                            type="number",
+                            style={"color": "white"},
+                        ),
+                        ], sm=6, md=4, lg=3
+                        ),
+                        dbc.Col([html.Label("Sampling Frequency", style={
+                            "color": colors["options"]}),
+                            dcc.Input(
+                            id="sampling-frequency",
+                            value=10000,
+                            type="number",
+                            style={"color": "white"},
+                        ),
+                        ], sm=6, md=4, lg=3
+                        ),
+                        dbc.Col([html.Label("Noise Energy", style={"color": colors["options"]}),
+                                 dcc.Input(
+                            id="noise-energy",
+                            value=0.000004,
+                            type="number",
+                            style={"color": "white"},
+                        ),
+                        ], sm=6, md=4, lg=3
+                        ),
+                    ]
                 ),
-                html.Label("Bit time", style={"color": colors["options"]}),
-                dcc.Input(
-                    id="bit-time",
-                    value=0.01,
-                    type="number",
-                    style={"margin": 5, "color": "white"},
-                ),
-                html.Label("Carrier Frequency", style={"color": colors["options"]}),
-                dcc.Input(
-                    id="carrier-frequency",
-                    value=100,
-                    type="number",
-                    style={"margin": 5, "color": "white"},
-                ),
-                html.Label("Sampling Frequency", style={"color": colors["options"]}),
-                dcc.Input(
-                    id="sampling-frequency",
-                    value=10000,
-                    type="number",
-                    style={"margin": 5, "color": "white"},
-                ),
-                html.Label("Noise Energy", style={"color": colors["options"]}),
-                dcc.Input(
-                    id="noise-energy",
-                    value=0.000004,
-                    type="number",
-                    style={"margin": 5, "color": "white"},
-                ),
-            ],
-            style={"columnCount": 3},
+                # dbc.Row(
+                #     children=[
+                #     ],
+                # ),
+            ], fluid=True
+            # style={"columnCount": 3},
         ),
-        html.Div(
-            id="input",
-            children=[
-                html.H2(
-                    children="Input Signal",
-                    style={"margin": 5, "textAlign": "left", "color": colors["text"],},
-                ),
-                dcc.Input(
-                    id="input-str",
-                    value="0",
-                    type="text",
-                    style={"margin": 5, "color": "white"},
-                ),
-                html.Button(
-                    id="submit-button-state",
-                    n_clicks=0,
-                    children="Submit",
-                    style={"margin": 5, "color": "white", "paddingBottom": 5},
-                ),
-            ],
+        dbc.Container([
+            html.Div(
+                id="input",
+                children=[
+                    html.H2(
+                        children="Input Signal",
+                        style={"margin": 5, "textAlign": "left",
+                               "color": colors["text"], },
+                    ),
+                    dcc.Input(
+                        id="input-str",
+                        value="0",
+                        type="text",
+                        style={"margin": 5, "color": "white"},
+                    ),
+                    html.Button(
+                        id="submit-button-state",
+                        n_clicks=0,
+                        children="Submit",
+                        style={"margin": 5, "color": "white",
+                               "paddingBottom": 5},
+                    ),
+                ],
+            ),
+            html.Hr(),
+            dcc.Graph(id="signal",),
+            dcc.Graph(id="modulated-signal"),
+            dcc.Graph(id="noise-signal"),
+            dcc.Graph(id="demodulated-signal"),
+        ], fluid=True
         ),
-        html.Hr(),
-        dcc.Graph(id="signal",),
-        dcc.Graph(id="modulated-signal"),
-        dcc.Graph(id="noise-signal"),
-        dcc.Graph(id="demodulated-signal"),
     ],
 )
 
@@ -214,21 +252,24 @@ def conv(
             modulated_signal = BPSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = BPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = BPSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
         if modulation_scheme == "BFSK":
             modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = BFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = BFSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
         if modulation_scheme == "QPSK":
             modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = QPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = QPSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             symbols = np.array([chars[0::2], chars[1::2]])
             t = np.linspace(
                 0,
@@ -240,7 +281,8 @@ def conv(
             modulated_signal = QFSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = QFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = QFSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
         binary_signal_figure = go.Figure()
