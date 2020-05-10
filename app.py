@@ -600,21 +600,15 @@ def conv(
                     font=dict(color=palatte["E"], size=14),
                     template="plotly_dark",
                 )
-<<<<<<< HEAD
                 graphs.append(
                     dcc.Graph(id="decoded-signal", figure=decoded_signal_figure)
                 )
-=======
-                graphs.append(dcc.Graph(
-                    id="decoded-signal",
-                    figure=decoded_signal_figure
-                ))
 
                 # Calculate new error_probabilities
                 ber_theoretical_old = ber_theoretical
                 ber_theoretical, ber_practical = Coding.error_probabilities(
-                    chars, decoded_signal, Eb, N0, ber_theoretical_old)
->>>>>>> 1dcf375... Calculate new error probs when encoding
+                    chars, decoded_signal, Eb, N0, ber_theoretical_old
+                )
         except (TypeError, IndexError):
             pass
 
