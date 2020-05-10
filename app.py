@@ -28,18 +28,19 @@ palatte = {
     "E": "#f4f4f4",
     "F": "#2f2f2f",
 }
+app = dash.Dash(
+    __name__,
+    external_stylesheets=external_stylesheets,
+    meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+)
 
 
-def dashboard() -> Tuple[dash.Dash, bool]:
+server = app.server
+
+
+def dashboard() -> None:
     """Loading the model and application"""
 
-    app = dash.Dash(
-        __name__,
-        external_stylesheets=external_stylesheets,
-        meta_tags=[{"name": "viewport", "content": "width=device-width"}],
-    )
-
-    server = app.server
     # msg = np.array(
     #     [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0]
     # )  # 8PSK demo signal
@@ -314,9 +315,7 @@ def dashboard() -> Tuple[dash.Dash, bool]:
                 demodulated_signal_figure,
             )
 
-    return app, server
-
 
 if __name__ == "__main__":
-    app, server = dashboard()
+    dashboard()
     app.run_server(debug=True)
