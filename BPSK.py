@@ -63,6 +63,6 @@ def demodulate(signal, Tb, f_c, f_s):
 def error_probabilities(msg, decoded_msg, Eb, N0):
     Pb = norm.sf(np.sqrt(2 * Eb / N0))
     # print('Theoretical Bit Error Probability:', Pb)
-    Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)
+    Pb_pr = np.count_nonzero(np.array(msg) != np.array(decoded_msg)) / len(msg)
     # print('Practical Bit Error Probability:', Pb_pr)
     return Pb, Pb_pr

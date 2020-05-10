@@ -44,5 +44,5 @@ def demodulate(signal, Tb, f_c1, f_s):
 
 def error_probabilities(msg, decoded_msg, Eb, N0):
     Pb = (1 / 2) * np.exp(-Eb / N0)
-    Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)
+    Pb_pr = np.count_nonzero(np.array(msg) != np.array(decoded_msg)) / len(msg)
     return Pb, Pb_pr

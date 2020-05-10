@@ -181,11 +181,8 @@ def error_probabilities(msg, decoded_msg, Eb, N0, k, M):
 
     # Symbol Error Probability Calculations
     Pe = 2 * norm.sf(np.sqrt(2 * k * Eb / N0) * np.sin(np.math.pi / M))
-    print("Theoretical Symbol Error Probability:", Pe)
     Pb = Pe / k
-    print("Theoretical Bit Error Probability:", Pb)
-    Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)
-    print("Practical Bit Error Probability:", Pb_pr)
+    Pb_pr = np.count_nonzero(np.array(msg) != np.array(decoded_msg)) / len(msg)
     return Pe, Pb, Pb_pr
 
 
