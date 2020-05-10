@@ -351,7 +351,7 @@ def conv(
 
         modulated_signal_figure = go.Figure()
         modulated_signal_figure.add_trace(
-            go.Scatter(x=t, y=modulated_signal, marker=dict(color="#4ecca3")),
+            go.Scatter(x=t, y=modulated_signal, marker=dict(color="#fc7e2f")),
         )
         modulated_signal_figure.update_layout(
             title="Modulated Signal",
