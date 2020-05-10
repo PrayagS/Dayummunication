@@ -60,12 +60,12 @@ app.layout = html.Div(
                 html.H1(
                     children="Dayummunication",
                     style={"textAlign": "center",
-                           "margin": 10, "color": colors["text"]},
+                           "mt": 10, "mb": 10, "color": colors["text"]},
                 ),
                 html.H5(
                     children="Making digital communications look dayumm!",
                     style={"textAlign": "center",
-                           "margin": 10, "color": colors["text"]},
+                           "mt": 10, "mb": 10, "color": colors["text"]},
                 ),
                 html.Hr(),
                 html.Div(
@@ -73,7 +73,7 @@ app.layout = html.Div(
                     children=[
                         html.H2(
                             children="Modulation Scheme",
-                            style={"margin": 5, "textAlign": "left",
+                            style={"mt": 10, "mb": 10, "textAlign": "left",
                                    "color": colors["text"], },
                         ),
                         dcc.Dropdown(
@@ -100,7 +100,7 @@ app.layout = html.Div(
                             ],
                             placeholder="For eg. BPSK",
                             value="BPSK",
-                            style={"margin": 5, "color": "white"},
+                            style={"mt": 10, "mb": 10, "color": "white"},
                         ),
                     ],
                 ),
@@ -173,24 +173,25 @@ app.layout = html.Div(
         dbc.Container([
             html.Div(
                 id="input",
+                className="align-middle",
                 children=[
                     html.H2(
                         children="Input Signal",
-                        style={"margin": 5, "textAlign": "left",
+                        style={"mt": 10, "mb": 10, "textAlign": "left",
                                "color": colors["text"], },
                     ),
                     dcc.Input(
                         id="input-str",
                         value="0",
                         type="text",
-                        style={"margin": 5, "color": "white"},
+                        style={"mt": 10, "mb": 10, "color": "white"},
                     ),
                     html.Button(
                         id="submit-button-state",
                         n_clicks=0,
                         children="Submit",
-                        style={"margin": 5, "color": "white",
-                               "paddingBottom": 5},
+                        style={"mt": 10, "mb": 10, "color": "white",
+                               "pb": 5},
                     ),
                 ],
             ),
