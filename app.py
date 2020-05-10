@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import Tuple
 
 import dash
 import dash_core_components as dcc
@@ -29,7 +30,7 @@ palatte = {
 }
 
 
-def dashboard() -> dash.Dash:
+def dashboard() -> Tuple[dash.Dash, bool]:
     """Loading the model and application"""
 
     app = dash.Dash(
@@ -37,6 +38,8 @@ def dashboard() -> dash.Dash:
         external_stylesheets=external_stylesheets,
         meta_tags=[{"name": "viewport", "content": "width=device-width"}],
     )
+
+    server = app.server
     # msg = np.array(
     #     [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0]
     # )  # 8PSK demo signal
@@ -311,8 +314,9 @@ def dashboard() -> dash.Dash:
                 demodulated_signal_figure,
             )
 
-    return app
+    return app, server
 
 
 if __name__ == "__main__":
-    dashboard().run_server()
+    app, server = dashboard()
+    app.run_server(debug=True)
