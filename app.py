@@ -211,7 +211,11 @@ app.layout = html.Div(
             html.Hr(),
             dcc.Graph(id="signal",),
             dcc.Graph(id="modulated-signal"),
-            dcc.Graph(id="noise-signal"),
+            dbc.Row(children=[
+                dbc.Col(dcc.Graph(id="noise"), md=12, lg=6),
+                dbc.Col(dcc.Graph(id="noise-signal"),
+                        md=12, lg=6),
+            ]),
             dcc.Graph(id="demodulated-signal"),
         ], fluid=True
         ),
@@ -223,6 +227,7 @@ app.layout = html.Div(
     [
         Output("signal", "figure"),
         Output("modulated-signal", "figure"),
+        Output("noise", "figure"),
         Output("noise-signal", "figure"),
         Output("demodulated-signal", "figure"),
     ],
@@ -345,15 +350,31 @@ def conv(
             template="plotly_dark",
         )
 
-        noise_signal_figure = make_subplots(rows=1, cols=2)
-        noise_signal_figure.add_trace(
-            go.Scatter(x=t, y=noise_signal, marker=dict(color="#4ecca3")), row=1, col=1,
+        noise_figure = go.Figure()
+        noise_figure.add_trace(
+            go.Scatter(x=t, y=noise_signal, marker=dict(color="#4ecca3")),
         )
-        noise_signal_figure.add_trace(
-            go.Scatter(x=t, y=signal_plus_noise, marker=dict(color="#fc7e2f")), row=1, col=2,
+        noise_figure.update_layout(
+            title="Noise Signal",
+            paper_bgcolor=palatte["A"],
+            font=dict(color=palatte["E"], size=14),
+            template="plotly_dark",
         )
+
+        noise_signal_figure = go.Figure()
+        noise_signal_figure.add_trace(
+            go.Scatter(x=t, y=signal_plus_noise, marker=dict(color="#fc7e2f")),
+        )
+
+        # noise_signal_figure = make_subplots(rows=1, cols=2)
+        # noise_signal_figure.add_trace(
+        #     go.Scatter(x=t, y=noise_signal, marker=dict(color="#4ecca3")), row=1, col=1,
+        # )
+        # noise_signal_figure.add_trace(
+        #     go.Scatter(x=t, y=signal_plus_noise, marker=dict(color="#fc7e2f")), row=1, col=2,
+        # )
         noise_signal_figure.update_layout(
-            title="Noise Signal and Modulation Signal + Noise Signal",
+            title="Modulation Signal + Noise Signal",
             paper_bgcolor=palatte["A"],
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
@@ -374,6 +395,7 @@ def conv(
         return (
             binary_signal_figure,
             modulated_signal_figure,
+            noise_figure,
             noise_signal_figure,
             demodulated_signal_figure,
         )
