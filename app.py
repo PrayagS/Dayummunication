@@ -54,7 +54,7 @@ t_s = 1.0 / f_s
 Tb = 0.01
 Eb = 0.001
 
-fs_min = 1000
+fs_min = 10000
 fs_max = 20000
 
 app.layout = html.Div(
@@ -179,8 +179,8 @@ app.layout = html.Div(
                                     value=100,
                                     type="number",
                                     style={"color": "white"},
-                                    min=10,
-                                    max=fs_max / 8,
+                                    min=100,
+                                    max=fs_min / 8,
                                 ),
                             ],
                             sm=6,
