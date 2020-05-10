@@ -263,14 +263,16 @@ app.layout = html.Div(
 
 
 @app.callback(
-    (
+    [
         # Output("signal", "figure"),
         # Output("modulated-signal", "figure"),
         # Output("noise", "figure"),
         # Output("noise-signal", "figure"),
         # Output("demodulated-signal", "figure"),
-        Output("container", "children")
-    ),
+        Output("container", "children"),
+        Output("ber-theoretical", "children"),
+        Output("ber-practical", "children"),
+    ],
     [
         Input("submit-button-state", "n_clicks"),
         Input("coding-flag", "value"),
@@ -525,7 +527,10 @@ def conv(
         #     noise_signal_figure,
         #     demodulated_signal_figure,
         # )
-        return html.Div(graphs)
+        return (
+            html.Div(graphs),
+            ber_theoretical, ber_practical
+        )
 
 
 # @app.callback(Output('container', 'children'), [Input('submit-button-state', 'n_clicks')])
