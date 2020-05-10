@@ -27,7 +27,7 @@ def demodulate(signal, Tb, f_c1, f_s):
     e4 = np.sin(2 * np.pi * f_c2 * t)  # sinomega2t
     received_msg = []
     for x in range(int(len(signal) / Ts)):
-        samplearr = signal[x * Ts : (x + 1) * Ts]
+        samplearr = signal[x * Ts: (x + 1) * Ts]
         e5 = (samplearr * e1).sum() / len(samplearr)
         e6 = (samplearr * e2).sum() / len(samplearr)
         e7 = (samplearr * e3).sum() / len(samplearr)
