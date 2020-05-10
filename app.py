@@ -41,6 +41,7 @@ server = app.server
 def dashboard() -> None:
     """Loading the model and application"""
 
+    global app
     # msg = np.array(
     #     [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0]
     # )  # 8PSK demo signal
