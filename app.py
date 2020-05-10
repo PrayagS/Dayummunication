@@ -257,11 +257,12 @@ app.layout = html.Div(
                             id="submit-button-state",
                             n_clicks=0,
                             children="Submit",
-                            style={"mt": 10, "mb": 10, "color": "white", "pb": 5},
+                            style={"mt": 10, "mb": 10,
+                                   "color": "white", "pb": 5},
                         ),
                         dcc.Checklist(
                             id="coding-flag",
-                            options=[{"label": "Encode", "value": "True"},],
+                            options=[{"label": "Encode", "value": "True"}, ],
                             labelStyle={"font-size": 16},
                             style={"margin-left": 5},
                         ),
@@ -436,7 +437,8 @@ def conv(
                     template="plotly_dark",
                 )
                 graphs.append(
-                    dcc.Graph(id="encoded-signal", figure=encoded_binary_signal_figure)
+                    dcc.Graph(id="encoded-signal",
+                              figure=encoded_binary_signal_figure)
                 )
         except (TypeError, IndexError):
             pass
@@ -445,7 +447,8 @@ def conv(
             modulated_signal = BPSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = BPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = BPSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
             ber_theoretical, ber_practical = BPSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
@@ -455,7 +458,8 @@ def conv(
             modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = BFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = BFSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
             ber_theoretical, ber_practical = BFSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
@@ -465,7 +469,8 @@ def conv(
             modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = QPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = QPSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             symbols = np.array([chars[0::2], chars[1::2]])
             t = np.linspace(
                 0,
@@ -480,7 +485,8 @@ def conv(
             modulated_signal = QFSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = QFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = QFSK.demodulate(
+                signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
             ser, ber_theoretical, ber_practical = QFSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
@@ -517,7 +523,8 @@ def conv(
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
         )
-        graphs.append(dcc.Graph(id="modulated-signal", figure=modulated_signal_figure))
+        graphs.append(dcc.Graph(id="modulated-signal",
+                                figure=modulated_signal_figure))
 
         noise_figure = go.Figure()
         noise_figure.add_trace(
@@ -551,9 +558,11 @@ def conv(
         graphs.append(
             dbc.Row(
                 children=[
-                    dbc.Col(dcc.Graph(id="noise", figure=noise_figure), md=12, lg=6),
+                    dbc.Col(dcc.Graph(id="noise", figure=noise_figure),
+                            md=12, lg=6),
                     dbc.Col(
-                        dcc.Graph(id="noise-signal", figure=noise_signal_figure),
+                        dcc.Graph(id="noise-signal",
+                                  figure=noise_signal_figure),
                         md=12,
                         lg=6,
                     ),
@@ -577,7 +586,8 @@ def conv(
             template="plotly_dark",
         )
         graphs.append(
-            dcc.Graph(id="demodulated-signal", figure=demodulated_signal_figure)
+            dcc.Graph(id="demodulated-signal",
+                      figure=demodulated_signal_figure)
         )
 
         try:
@@ -600,11 +610,6 @@ def conv(
                     font=dict(color=palatte["E"], size=14),
                     template="plotly_dark",
                 )
-<<<<<<< HEAD
-                graphs.append(
-                    dcc.Graph(id="decoded-signal", figure=decoded_signal_figure)
-                )
-=======
                 graphs.append(dcc.Graph(
                     id="decoded-signal",
                     figure=decoded_signal_figure
@@ -614,7 +619,6 @@ def conv(
                 ber_theoretical_old = ber_theoretical
                 ber_theoretical, ber_practical = Coding.error_probabilities(
                     chars, decoded_signal, Eb, N0, ber_theoretical_old)
->>>>>>> 1dcf375... Calculate new error probs when encoding
         except (TypeError, IndexError):
             pass
 
