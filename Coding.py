@@ -25,6 +25,7 @@ def decodebits(demodmsg):
 
 
 def error_probabilities(msg, decoded_msg, Eb, N0, pc):
+    # pc is the theoretical bit error probability without encoding - depends on the method used and hence needs to be passed to this function
     t = 3
     n = 24
     Pb = 0
