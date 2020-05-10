@@ -3,6 +3,7 @@
 from typing import Tuple
 
 import dash
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
@@ -14,7 +15,6 @@ import BFSK
 import BPSK
 import channel
 import Coding
-import dash_bootstrap_components as dbc
 import MPSK
 import QFSK
 import QPSK
@@ -53,6 +53,9 @@ t_s = 1.0 / f_s
 # MPSK Parameters
 Tb = 0.01
 Eb = 0.001
+
+fs_min = 1000
+fs_max = 20000
 
 app.layout = html.Div(
     style={"backgroundColor": colors["background"]},
@@ -177,7 +180,7 @@ app.layout = html.Div(
                                     type="number",
                                     style={"color": "white"},
                                     min=10,
-                                    max=500,
+                                    max=fs_max / 8,
                                 ),
                             ],
                             sm=6,
@@ -195,8 +198,8 @@ app.layout = html.Div(
                                     value=10000,
                                     type="number",
                                     style={"color": "white"},
-                                    min=1000,
-                                    max=20000,
+                                    min=fs_min,
+                                    max=fs_max,
                                 ),
                             ],
                             sm=6,
