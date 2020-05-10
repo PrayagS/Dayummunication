@@ -1,5 +1,6 @@
 from golay import encode, decode
 import numpy as np
+from scipy.special import comb
 
 
 def encodebits(msg):
@@ -23,9 +24,15 @@ def decodebits(demodmsg):
     return decodedmsg
 
 
-def error_probabilities(msg, decoded_msg, Eb, N0):
+def error_probabilities(msg, decoded_msg, Eb, N0, pc):
+    t = 3
+    n = 24
+    Pb = 0
+    for i in range(t+1, n+1):
+        Pb += i*comb(n, i, exact=True)*pc**i*(1-pc)**(n-i)
+    Pb /= n
     Pb_pr = np.count_nonzero(msg != decoded_msg) / len(msg)
-    return Pb_pr
+    return Pb, Pb_pr
 
 
 if __name__ == "__main__":
