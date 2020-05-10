@@ -482,6 +482,7 @@ def conv(
         demodulated_signal_figure = go.Figure()
         demodulated_signal_figure.add_trace(
             go.Scatter(x=t, y=demodulated_signal,
+                       mode="lines+markers",
                        marker=dict(color="#4ecca3")),
         )
         demodulated_signal_figure.update_layout(
@@ -501,6 +502,7 @@ def conv(
                 decoded_signal_figure = go.Figure()
                 decoded_signal_figure.add_trace(
                     go.Scatter(x=t, y=decoded_signal,
+                               mode="lines+markers",
                                marker=dict(color="#4ecca3")),
                 )
                 decoded_signal_figure.update_layout(
