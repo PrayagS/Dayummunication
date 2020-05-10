@@ -257,13 +257,16 @@ app.layout = html.Div(
                             id="submit-button-state",
                             n_clicks=0,
                             children="Submit",
-                            style={"mt": 10, "mb": 10,
-                                   "color": "white", "pb": 5},
+                            style={"mt": 10, "mb": 10, "color": "white", "pb": 5},
                         ),
                         dcc.Checklist(
                             id="coding-flag",
                             options=[
-                                {"label": "Encode. Encoding is done using extended Golay code i.e. [24, 12, 8] linear ECC.", "value": "True"}, ],
+                                {
+                                    "label": "Encode. Encoding is done using extended Golay code i.e. [24, 12, 8] linear ECC.",
+                                    "value": "True",
+                                },
+                            ],
                             labelStyle={"font-size": 16},
                             style={"margin": 5},
                         ),
@@ -433,8 +436,7 @@ def conv(
                     template="plotly_dark",
                 )
                 graphs.append(
-                    dcc.Graph(id="encoded-signal",
-                              figure=encoded_binary_signal_figure)
+                    dcc.Graph(id="encoded-signal", figure=encoded_binary_signal_figure)
                 )
         except (TypeError, IndexError):
             pass
@@ -443,8 +445,7 @@ def conv(
             modulated_signal = BPSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = BPSK.demodulate(
-                signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = BPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
             ber_theoretical, ber_practical = BPSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
@@ -454,8 +455,7 @@ def conv(
             modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = BFSK.demodulate(
-                signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = BFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
             ber_theoretical, ber_practical = BFSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
@@ -465,8 +465,7 @@ def conv(
             modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = QPSK.demodulate(
-                signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = QPSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
             symbols = np.array([chars[0::2], chars[1::2]])
             t = np.linspace(
                 0,
@@ -481,8 +480,7 @@ def conv(
             modulated_signal = QFSK.modulate(chars, Eb, Tb, f_c, f_s)
             noise_signal = channel.generate_noise(modulated_signal, N0, f_s)
             signal_plus_noise = modulated_signal + noise_signal
-            demodulated_signal = QFSK.demodulate(
-                signal_plus_noise, Tb, f_c, f_s)
+            demodulated_signal = QFSK.demodulate(signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
             ser, ber_theoretical, ber_practical = QFSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
@@ -498,8 +496,7 @@ def conv(
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
         )
-        graphs.append(dcc.Graph(id="modulated-signal",
-                                figure=modulated_signal_figure))
+        graphs.append(dcc.Graph(id="modulated-signal", figure=modulated_signal_figure))
 
         noise_figure = go.Figure()
         noise_figure.add_trace(
@@ -533,11 +530,9 @@ def conv(
         graphs.append(
             dbc.Row(
                 children=[
-                    dbc.Col(dcc.Graph(id="noise", figure=noise_figure),
-                            md=12, lg=6),
+                    dbc.Col(dcc.Graph(id="noise", figure=noise_figure), md=12, lg=6),
                     dbc.Col(
-                        dcc.Graph(id="noise-signal",
-                                  figure=noise_signal_figure),
+                        dcc.Graph(id="noise-signal", figure=noise_signal_figure),
                         md=12,
                         lg=6,
                     ),
@@ -561,8 +556,7 @@ def conv(
             template="plotly_dark",
         )
         graphs.append(
-            dcc.Graph(id="demodulated-signal",
-                      figure=demodulated_signal_figure)
+            dcc.Graph(id="demodulated-signal", figure=demodulated_signal_figure)
         )
 
         try:
@@ -586,8 +580,7 @@ def conv(
                     template="plotly_dark",
                 )
                 graphs.append(
-                    dcc.Graph(id="decoded-signal",
-                              figure=decoded_signal_figure)
+                    dcc.Graph(id="decoded-signal", figure=decoded_signal_figure)
                 )
 
                 # Calculate new error_probabilities
@@ -636,6 +629,26 @@ def conv(
 #         ))
 #     print(type(html.Div(graphs)))
 #     return html.Div(graphs)
+
+
+def conv_test(input_str: str) -> list:
+    chars = []
+    for i in input_str:
+        b = bin(ord(i))[2:]
+        b = "0" + b if len(b) == 7 else "00" + b
+        chars.append(b)
+
+    chars = [int(i) for i in list("".join(chars))]
+    decode = [chars[i * 8 : (i + 1) * 8] for i in range(len(chars) // 8)]
+    decoded = []
+    for i in decode:
+        x = "0b"
+        for j in i:
+            x += str(j)
+        decoded.append(x)
+
+    for i in decoded:
+        print(chr(int(i, 2)))
 
 
 if __name__ == "__main__":
