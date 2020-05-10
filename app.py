@@ -385,11 +385,6 @@ def conv(
             chars.append(b)
 
         chars = [int(i) for i in list("".join(chars))]
-        try:
-            if coding_flag[0] == "True":
-                chars = Coding.encodebits(chars)
-        except (TypeError, IndexError):
-            pass
         modulated_signal = None
         noise_signal = None
         signal_plus_noise = None
@@ -485,27 +480,6 @@ def conv(
             ser, ber_theoretical, ber_practical = QFSK.error_probabilities(
                 chars, demodulated_signal, Eb, N0
             )
-        try:
-            if coding_flag[0] == "True":
-                demodulated_signal = Coding.decodebits(demodulated_signal)
-        except (TypeError, IndexError):
-            pass
-
-        binary_signal_figure = go.Figure()
-        binary_signal_figure.add_trace(
-            go.Scatter(
-                x=list(range(len(chars))),
-                y=chars,
-                mode="lines+markers",
-                marker=dict(color="#4ecca3"),
-            )
-        )
-        binary_signal_figure.update_layout(
-            title="Binary Signal",
-            paper_bgcolor=palatte["A"],
-            font=dict(color=palatte["E"], size=14),
-            template="plotly_dark",
-        )
 
         modulated_signal_figure = go.Figure()
         modulated_signal_figure.add_trace(
