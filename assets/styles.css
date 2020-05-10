@@ -842,6 +842,10 @@ select {
   color: #b4b4b4;
 }
 
+#input_str {
+  width: 100%;
+}
+
 .modal {
   display: block; /*Hidden by default */
   position: fixed; /* Stay in place */
