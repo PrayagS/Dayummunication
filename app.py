@@ -262,9 +262,10 @@ app.layout = html.Div(
                         ),
                         dcc.Checklist(
                             id="coding-flag",
-                            options=[{"label": "Encode", "value": "True"}, ],
+                            options=[
+                                {"label": "Encode. Encoding is done using extended Golay code i.e. [24, 12, 8] linear ECC.", "value": "True"}, ],
                             labelStyle={"font-size": 16},
-                            style={"margin-left": 5},
+                            style={"margin": 5},
                         ),
                     ],
                 ),
