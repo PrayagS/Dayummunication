@@ -14,6 +14,7 @@ from plotly.subplots import make_subplots
 import BFSK
 import BPSK
 import channel
+import Coding
 import MPSK
 import QFSK
 import QPSK
@@ -192,6 +193,18 @@ app.layout = html.Div(
                         style={"margin": 5, "color": "white",
                                "paddingBottom": 5},
                     ),
+                    dcc.Checklist(
+                        id="coding-flag",
+                        options=[
+                            {"label": "Encode", "value": "True"},
+                        ],
+                        labelStyle={
+                            "font-size": 16
+                        },
+                        style={
+                            "margin-left": 5
+                        },
+                    )
                 ],
             ),
             html.Hr(),
@@ -214,6 +227,7 @@ app.layout = html.Div(
     ],
     [
         Input("submit-button-state", "n_clicks"),
+        Input("coding-flag", "value"),
         Input("modulation-scheme", "value"),
         Input("energy", "value"),
         Input("bit-time", "value"),
@@ -225,6 +239,7 @@ app.layout = html.Div(
 )
 def conv(
     n_clicks: int,
+    coding_flag: str,
     modulation_scheme: str,
     Eb: int,
     Tb: int,
@@ -247,6 +262,12 @@ def conv(
         signal_plus_noise = None
         demodulated_signal = None
         t = None
+
+        try:
+            if coding_flag[0] == "True":
+                chars = Coding.encodebits(chars)
+        except (TypeError, IndexError):
+            pass
 
         if modulation_scheme == "BPSK":
             modulated_signal = BPSK.modulate(chars, Eb, Tb, f_c, f_s)
@@ -285,6 +306,12 @@ def conv(
                 signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
 
+        try:
+            if coding_flag[0] == "True":
+                demodulated_signal = Coding.decodebits(demodulated_signal)
+        except (TypeError, IndexError):
+            pass
+
         binary_signal_figure = go.Figure()
         binary_signal_figure.add_trace(
             go.Scatter(
@@ -303,7 +330,7 @@ def conv(
 
         modulated_signal_figure = go.Figure()
         modulated_signal_figure.add_trace(
-            go.Scatter(x=t, y=modulated_signal, marker=dict(color="#4ecca3"))
+            go.Scatter(x=t, y=modulated_signal, marker=dict(color="#4ecca3")),
         )
         modulated_signal_figure.update_layout(
             title="Modulated Signal",
@@ -317,9 +344,7 @@ def conv(
             go.Scatter(x=t, y=noise_signal, marker=dict(color="#4ecca3")), row=1, col=1,
         )
         noise_signal_figure.add_trace(
-            go.Scatter(x=t, y=signal_plus_noise, marker=dict(color="#fc7e2f")),
-            row=1,
-            col=2,
+            go.Scatter(x=t, y=signal_plus_noise, marker=dict(color="#fc7e2f")), row=1, col=2,
         )
         noise_signal_figure.update_layout(
             title="Noise Signal and Modulation Signal + Noise Signal",
@@ -330,7 +355,8 @@ def conv(
 
         demodulated_signal_figure = go.Figure()
         demodulated_signal_figure.add_trace(
-            go.Scatter(x=t, y=demodulated_signal, marker=dict(color="#4ecca3"))
+            go.Scatter(x=t, y=demodulated_signal,
+                       marker=dict(color="#4ecca3")),
         )
         demodulated_signal_figure.update_layout(
             title="Demodulated Signal",
