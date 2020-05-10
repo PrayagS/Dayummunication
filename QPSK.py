@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import periodogram
 from scipy.stats import norm
+
 from MPSK import error_probabilities
 
 # Carrier signal
@@ -49,15 +50,13 @@ def modulate(msg, Eb, Tb, f_c, f_s):
     I = A * np.cos(theta)  # in-phase component
     Q = A * np.sin(theta)  # quadrature component
 
-    modulated_signal = np.empty(
-        np.size(symbols, axis=1) * len(t), dtype="float")
+    modulated_signal = np.empty(np.size(symbols, axis=1) * len(t), dtype="float")
     phi_1 = np.sqrt(2 / Tb) * np.cos(2.0 * np.math.pi * f_c * t)
     phi_2 = np.sqrt(2 / Tb) * np.sin(2.0 * np.math.pi * f_c * t)
     for k in range(np.size(symbols, axis=1)):
         # Calculates modulated signal for each symbol
         # Page 12, Lecture 16
-        modulated_signal[k * len(t): (k + 1) * len(t)
-                         ] = I[k] * phi_1 - Q[k] * phi_2
+        modulated_signal[k * len(t) : (k + 1) * len(t)] = I[k] * phi_1 - Q[k] * phi_2
     # print(modulated_signal)
 
     return modulated_signal
@@ -172,8 +171,8 @@ def demodulate(signal, Tb, f_c, f_s):
 
 if __name__ == "__main__":
     pass
-    # msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
-    # modulated_msg = modulate(msg)
+    msg = np.array([0, 1, 0, 0, 1, 1, 0, 1, 1, 0])
+    modulated_msg = modulate(msg, 0.001, 0.01, 100, 10000)
     # msg_with_noise, N0 = add_noise(modulated_msg)
     # received_msg = demodulate(msg_with_noise)
     # Pe, Pb, Pb_pr = error_probabilities(msg, received_msg, N0, 2, 4)
