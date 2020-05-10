@@ -25,7 +25,7 @@ def encode(data):
 def decode(data):
     n = 24
     # Split data into chunks of 24
-    split_data = data.reshape(len(data) // n, n)
+    split_data = np.array(data).reshape(len(data) // n, n)
     decoded_data = []
     for i in range(len(split_data)):
         # Decode and append
