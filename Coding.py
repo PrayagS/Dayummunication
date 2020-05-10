@@ -32,7 +32,12 @@ def error_probabilities(msg, decoded_msg, Eb, N0, pc):
     for i in range(t+1, n+1):
         Pb += i*comb(n, i, exact=True)*pc**i*(1-pc)**(n-i)
     Pb /= n
-    Pb_pr = np.count_nonzero(np.array(msg) != np.array(decoded_msg)) / len(msg)
+    Pb_pr = 0
+
+    for i in range(len(msg)):
+        if int(msg[i]) != int(decoded_msg[i]):
+            Pb_pr += 1
+    Pb_pr /= len(msg)
     return Pb, Pb_pr
 
 
@@ -40,6 +45,8 @@ if __name__ == "__main__":
     msg = np.random.randint(
         low=0, high=2, size=np.random.randint(
             low=0, high=500, size=1)[0])
+    # msg = np.random.randint(
+    #     low=0, high=2, size=192)
     encoded_data = encodebits(msg)
     decoded_data = decodebits(encoded_data)
     print(msg.shape)
