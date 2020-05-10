@@ -114,7 +114,7 @@ app.layout = html.Div(
                 dbc.Row(
                     children=[
                         dbc.Col(children=[
-                            html.Label("Energy of the signal", style={
+                            html.Label("Bit energy (Eb)", style={
                                 "color": colors["options"]}),
                             dcc.Input(
                                 id="energy",
@@ -161,7 +161,7 @@ app.layout = html.Div(
                         ),
                         ], sm=6, md=4, lg=3
                         ),
-                        dbc.Col([html.Label("Noise Energy", style={"color": colors["options"]}),
+                        dbc.Col([html.Label("Noise Power Spectral Density (N0)", style={"color": colors["options"]}),
                                  dcc.Input(
                             id="noise-energy",
                             value=0.000004,
@@ -227,6 +227,32 @@ app.layout = html.Div(
                         md=12, lg=6),
             ]),
             dcc.Graph(id="demodulated-signal"),
+            html.Hr(),
+            html.H2('Bit Error Rate'),
+            dbc.Row(children=[
+                dbc.Col(children=[
+                    html.H3(children="Theoretical",
+                            style={"mt": 10, "mb": 10, "textAlign": "center",
+                                   "color": colors["text"], },
+                            ),
+                    html.H3(children="0",
+                            id="ber-theoretical",
+                            style={"mt": 10, "mb": 10, "textAlign": "center",
+                                   "color": colors["text"], },
+                            ),
+                ], md=6),
+                dbc.Col(children=[
+                    html.H3(children="Practical",
+                            style={"mt": 10, "mb": 10, "textAlign": "center",
+                                   "color": colors["options"], },
+                            ),
+                    html.H3(children="0",
+                            id="ber-practical",
+                            style={"mt": 10, "mb": 10, "textAlign": "center",
+                                   "color": colors["options"], },
+                            ),
+                ], md=6),
+            ]),
         ], fluid=True
         ),
     ],
@@ -240,6 +266,8 @@ app.layout = html.Div(
         Output("noise", "figure"),
         Output("noise-signal", "figure"),
         Output("demodulated-signal", "figure"),
+        Output("ber-theoretical", "children"),
+        Output("ber-practical", "children"),
     ],
     [
         Input("submit-button-state", "n_clicks"),
@@ -283,6 +311,8 @@ def conv(
         signal_plus_noise = None
         demodulated_signal = None
         t = None
+        ber_theoretical = 0
+        ber_practical = 0
 
         try:
             if coding_flag[0] == "True":
@@ -297,6 +327,8 @@ def conv(
             demodulated_signal = BPSK.demodulate(
                 signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
+            ber_theoretical, ber_practical = BPSK.error_probabilities(
+                chars, demodulated_signal, Eb, N0)
 
         if modulation_scheme == "BFSK":
             modulated_signal = BFSK.modulate(chars, Eb, Tb, f_c, f_s)
@@ -305,6 +337,8 @@ def conv(
             demodulated_signal = BFSK.demodulate(
                 signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
+            ber_theoretical, ber_practical = BFSK.error_probabilities(
+                chars, demodulated_signal, Eb, N0)
 
         if modulation_scheme == "QPSK":
             modulated_signal = QPSK.modulate(chars, Eb, Tb, f_c, f_s)
@@ -318,6 +352,8 @@ def conv(
                 np.size(symbols, axis=1) * Tb,
                 int(np.size(symbols, axis=1) * Tb * f_s),
             )
+            ser, ber_theoretical, ber_practical = MPSK.error_probabilities(
+                chars, demodulated_signal, Eb, N0, 2, 4)
 
         if modulation_scheme == "QFSK":
             modulated_signal = QFSK.modulate(chars, Eb, Tb, f_c, f_s)
@@ -326,7 +362,7 @@ def conv(
             demodulated_signal = QFSK.demodulate(
                 signal_plus_noise, Tb, f_c, f_s)
             t = np.linspace(0, len(chars) * Tb, int(len(chars) * Tb * f_s))
-
+            ser, ber_theoretical, ber_practical = QFSK.error_probabilities(chars, demodulated_signal, Eb, N0)
         try:
             if coding_flag[0] == "True":
                 demodulated_signal = Coding.decodebits(demodulated_signal)
@@ -365,7 +401,7 @@ def conv(
             go.Scatter(x=t, y=noise_signal, marker=dict(color="#4ecca3")),
         )
         noise_figure.update_layout(
-            title="Noise Signal",
+            title="Additive White Gaussian Noise",
             paper_bgcolor=palatte["A"],
             font=dict(color=palatte["E"], size=14),
             template="plotly_dark",
@@ -408,6 +444,7 @@ def conv(
             noise_figure,
             noise_signal_figure,
             demodulated_signal_figure,
+            ber_theoretical, ber_practical,
         )
 
 

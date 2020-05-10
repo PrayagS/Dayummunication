@@ -175,7 +175,7 @@ def demodulate_signal(modulated_signal, decoding_table, gray_code, k):
     return decoded_msg
 
 
-def error_probabilities(msg, decoded_msg, N0, k, M):
+def error_probabilities(msg, decoded_msg, Eb, N0, k, M):
     # Bit Error Probability Calculations
     # Pb = norm.sf(np.sqrt(2 * Eb / N0)) This is for BPSK/QPSK
 
