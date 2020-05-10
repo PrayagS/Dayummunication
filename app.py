@@ -121,6 +121,8 @@ app.layout = html.Div(
                                 value=0.001,
                                 type="number",
                                 style={"color": "white"},
+                                min=0.001,
+                                max=10,
                             ),
                         ], sm=6, md=4, lg=3
                         ),
@@ -130,6 +132,8 @@ app.layout = html.Div(
                             value=0.01,
                             type="number",
                             style={"color": "white"},
+                            min=0.001,
+                            max=5,
                         ),
                         ], sm=6, md=4, lg=3
                         ),
@@ -140,6 +144,8 @@ app.layout = html.Div(
                             value=100,
                             type="number",
                             style={"color": "white"},
+                            min=10,
+                            max=500,
                         ),
                         ], sm=6, md=4, lg=3
                         ),
@@ -150,6 +156,8 @@ app.layout = html.Div(
                             value=10000,
                             type="number",
                             style={"color": "white"},
+                            min=1000,
+                            max=20000,
                         ),
                         ], sm=6, md=4, lg=3
                         ),
@@ -159,6 +167,8 @@ app.layout = html.Div(
                             value=0.000004,
                             type="number",
                             style={"color": "white"},
+                            min=0.00000000000000000001,
+                            max=10,
                         ),
                         ], sm=6, md=4, lg=3
                         ),
