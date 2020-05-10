@@ -315,4 +315,4 @@ def dashboard() -> dash.Dash:
 
 
 if __name__ == "__main__":
-    dashboard().run_server(debug=True)
+    dashboard().run_server()
