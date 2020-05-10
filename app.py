@@ -257,6 +257,11 @@ def conv(
             chars.append(b)
 
         chars = [int(i) for i in list("".join(chars))]
+        try:
+            if coding_flag[0] == "True":
+                chars = Coding.encodebits(chars)
+        except (TypeError, IndexError):
+            pass
         modulated_signal = None
         noise_signal = None
         signal_plus_noise = None
