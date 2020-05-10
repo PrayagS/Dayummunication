@@ -29,7 +29,11 @@ def decode(data):
     decoded_data = []
     for i in range(len(split_data)):
         # Decode and append
-        decoded_data.extend(decode_extended_Golay(split_data[i].tolist()))
+        temp = decode_extended_Golay(split_data[i].tolist())
+        if temp == "request retransmission":
+            temp = np.random.randint(low=0, high=2, size=12)
+            # temp = decode_extended_Golay(split_data[i].tolist())
+        decoded_data.extend(temp)
     decoded_data = np.array(decoded_data)
     return decoded_data
 
