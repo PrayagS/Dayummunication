@@ -642,7 +642,7 @@ def conv(
 
 
 def decode_to_str(demodulated_signal: List[int]) -> str:
-    chars = [
+    chars: List[List[int]] = [
         demodulated_signal[i * 8 : (i + 1) * 8]
         for i in range(len(demodulated_signal) // 8)
     ]
