@@ -641,7 +641,7 @@ def conv(
 #     return html.Div(graphs)
 
 
-def decode_to_str(demodulated_signal: List[int]) -> List[str]:
+def decode_to_str(demodulated_signal: List[int]) -> str:
     chars = [
         demodulated_signal[i * 8 : (i + 1) * 8]
         for i in range(len(demodulated_signal) // 8)
