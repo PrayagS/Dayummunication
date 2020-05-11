@@ -342,6 +342,26 @@ app.layout = html.Div(
                         ),
                     ]
                 ),
+                html.Div(
+                    # id="input",
+                    # className="align-middle",
+                    children=[
+                        html.H2(
+                            children="Output Signal",
+                            style={
+                                "mt": 10,
+                                "mb": 10,
+                                "textAlign": "left",
+                                "color": colors["text"],
+                            },
+                        ),
+                        dcc.Textarea(
+                            id="output-str",
+                            # type="text",
+                            style={"mt": 10, "mb": 10, "color": "white"},
+                        ),
+                    ]
+                ),
                 # dcc.Graph(id="signal",),
                 # dcc.Graph(id="modulated-signal"),
                 # dbc.Row(children=[
@@ -367,6 +387,7 @@ app.layout = html.Div(
         Output("container", "children"),
         Output("ber-theoretical", "children"),
         Output("ber-practical", "children"),
+        Output("output-str", "value"),
     ],
     [
         Input("submit-button-state", "n_clicks"),
@@ -496,6 +517,8 @@ def conv(
                 chars, demodulated_signal, Eb, N0
             )
 
+        out = decode_to_str(demodulated_signal)
+
         modulated_signal_figure = go.Figure()
         modulated_signal_figure.add_trace(
             go.Scatter(x=t, y=modulated_signal, marker=dict(color="#fc7e2f")),
@@ -608,7 +631,7 @@ def conv(
         #     noise_signal_figure,
         #     demodulated_signal_figure,
         # )
-        return (html.Div(graphs), ber_theoretical, ber_practical)
+        return (html.Div(graphs), ber_theoretical, ber_practical, out)
 
 
 # @app.callback(Output('container', 'children'), [Input('submit-button-state', 'n_clicks')])
