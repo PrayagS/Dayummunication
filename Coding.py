@@ -16,7 +16,8 @@ def encodebits(msg):
 def decodebits(demodmsg):
     decodedmsg = decode(demodmsg)
     last12bits = decodedmsg[-12:]
-    bitstoignore = 12 if (np.argmax(last12bits) == 0) else np.argmax(last12bits)
+    bitstoignore = 12 if (np.argmax(last12bits) ==
+                          0) else np.argmax(last12bits)
     bitstoignore = 12 if (np.argmax(last12bits) == 0) else (12 - bitstoignore)
     bitstoignore += 12
     decodedmsg = decodedmsg[:-(bitstoignore)]
@@ -33,7 +34,7 @@ def error_probabilities(msg, decoded_msg, Eb, N0, pc):
     Pb /= n
     Pb_pr = 0
 
-    for i in range(len(msg)):
+    for i in range(len(decoded_msg)):
         if int(msg[i]) != int(decoded_msg[i]):
             Pb_pr += 1
     Pb_pr /= len(msg)

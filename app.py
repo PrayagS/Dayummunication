@@ -641,7 +641,7 @@ def conv(
                     dcc.Graph(id="decoded-signal",
                               figure=decoded_signal_figure)
                 )
-
+                out = decode_to_str(decoded_signal)
                 # Calculate new error_probabilities
                 ber_theoretical_old = ber_theoretical
                 ber_theoretical, ber_practical = Coding.error_probabilities(
@@ -649,7 +649,7 @@ def conv(
                 )
 
                 # Convert to string
-                out = decode_to_str(decoded_signal)
+
         except (TypeError, IndexError):
             pass
         # return (
