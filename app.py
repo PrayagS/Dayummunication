@@ -422,6 +422,7 @@ def conv(
             chars.append(b)
 
         chars = [int(i) for i in list("".join(chars))]
+        charorig = None
         modulated_signal = None
         noise_signal = None
         signal_plus_noise = None
@@ -430,7 +431,6 @@ def conv(
         ber_theoretical = 0
         ber_practical = 0
         out = None
-
         graphs = []
 
         binary_signal_figure = go.Figure()
@@ -454,6 +454,7 @@ def conv(
 
         try:
             if coding_flag[0] == "True":
+                charsorig = chars
                 chars = Coding.encodebits(chars)
                 encoded_binary_signal_figure = go.Figure()
                 encoded_binary_signal_figure.add_trace(
@@ -645,7 +646,7 @@ def conv(
                 # Calculate new error_probabilities
                 ber_theoretical_old = ber_theoretical
                 ber_theoretical, ber_practical = Coding.error_probabilities(
-                    chars, decoded_signal, Eb, N0, ber_theoretical_old
+                    charsorig, decoded_signal, Eb, N0, ber_theoretical_old
                 )
 
                 # Convert to string

@@ -33,11 +33,12 @@ def error_probabilities(msg, decoded_msg, Eb, N0, pc):
         Pb += i * comb(n, i, exact=True) * pc ** i * (1 - pc) ** (n - i)
     Pb /= n
     Pb_pr = 0
-
+    count = 0
     for i in range(len(decoded_msg)):
         if int(msg[i]) != int(decoded_msg[i]):
             Pb_pr += 1
-    Pb_pr /= len(msg)
+        count += 1
+    Pb_pr = Pb_pr/count
     return Pb, Pb_pr
 
 
