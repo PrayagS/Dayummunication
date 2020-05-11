@@ -24,10 +24,30 @@
     <a href="#how-it-works">How it Works</a>
   </strong>
 </p>
-
 ---
 
 ## Introduction
+Dayummunication helps you simulate and visualise digital communication techniques:
+
+- Binary Phase Shift Keying (BPSK)
+- Quaternary Phase Shift Keying (QPSK)
+- Binary Frequency Shift Keying (BFSK)
+- Quaternary Frequency Shift Keying (QFSK)
+
+The channel is simulated by adding AWGN (Addiitve White Gaussian Noise). Also, extended Golay Coding [24,12,8] is used. 
+
+Dayummunication allows you to control the following parameters:
+
+- Bit Energy
+- Bit Time
+- Carrier Frequency
+- Sampling Frequency
+- Noise Power Spectral Density
+
+It serves as a playground to help interested people teach and learn these standard ideas of digital communication. 
+
+## Block Diagram
+
 ## How it Works
 
 ## Team
