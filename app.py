@@ -428,6 +428,7 @@ def conv(
         t = None
         ber_theoretical = 0
         ber_practical = 0
+        out = None
 
         graphs = []
 
@@ -589,6 +590,8 @@ def conv(
         graphs.append(
             dcc.Graph(id="demodulated-signal", figure=demodulated_signal_figure)
         )
+        
+        out = decode_to_str(demodulated_signal)
 
         try:
             if coding_flag[0] == "True":
@@ -619,14 +622,11 @@ def conv(
                 ber_theoretical, ber_practical = Coding.error_probabilities(
                     chars, decoded_signal, Eb, N0, ber_theoretical_old
                 )
+                
+                # Convert to string
+                out = decode_to_str(decoded_signal)
         except (TypeError, IndexError):
             pass
-
-        out = (
-            decode_to_str(decoded_signal)
-            if coding_flag[0] == "True"
-            else decode_to_str(demodulated_signal)
-        )
         # return (
         #     binary_signal_figure,
         #     modulated_signal_figure,
