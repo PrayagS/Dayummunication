@@ -517,8 +517,6 @@ def conv(
                 chars, demodulated_signal, Eb, N0
             )
 
-        out = decode_to_str(demodulated_signal)
-
         modulated_signal_figure = go.Figure()
         modulated_signal_figure.add_trace(
             go.Scatter(x=t, y=modulated_signal, marker=dict(color="#fc7e2f")),
@@ -624,6 +622,11 @@ def conv(
         except (TypeError, IndexError):
             pass
 
+        out = (
+            decode_to_str(decoded_signal)
+            if coding_flag[0] == "True"
+            else decode_to_str(demodulated_signal)
+        )
         # return (
         #     binary_signal_figure,
         #     modulated_signal_figure,
