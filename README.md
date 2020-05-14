@@ -112,45 +112,37 @@ Where pc is the bit error probability without encoding, t is the number of corre
 </h5>
 
 ### BFSK
-#### Modulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BFSK_M.png?raw=true">
 </h5>
 
-#### Demodulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BFSK_D.png?raw=true">
 </h5>
 
 ### QFSK
-#### Modulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QFSK_M.png?raw=true">
 </h5>
 
-#### Demodulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QFSK_D.png?raw=true">
 </h5>
 
 ### BPSK
-#### Modulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BPSK_M.png?raw=true">
 </h5>
 
-#### Demodulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BPSK_D.png?raw=true">
 </h5>
 
 ### QPSK
-#### Modulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QPSK_M.png?raw=true">
 </h5>
 
-#### Demodulator
 <h5 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QPSK_D.png?raw=true">
 </h5>
