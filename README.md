@@ -98,7 +98,7 @@ Where pc is the bit error probability without encoding, t is the number of corre
 ## Technology Stack
 
 - Python as the primary language
-- Scipy and NumPy for scientific computation, inbuilt functions and array operations
+- SciPy and NumPy for scientific computation, inbuilt functions and array operations
 - Matplotlib for testing on backend and error analysis
 - Dash (Plotly) for the web application with dynamically updating results.
 
