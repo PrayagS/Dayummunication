@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-	<img src="https://github.com/PrayagS/Dayummunication/blob/master/images/d2.png?raw=true">
+	<img src="https://github.com/PrayagS/Dayummunication/blob/master/images/dashboard.png?raw=true">
 </p>
 
 <p align="center">
