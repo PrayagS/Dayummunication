@@ -180,12 +180,24 @@ Theoretical|Practical
 This was done by converting the image to a matrix of RGB values. Each value in that matrix was converted to binary and the obtained matrix was transmitted over our AWGN channel. At the receiving end, the matrix is again converted to the matrix of RGB values from which the image is generated.
 
 #### BPSK
+![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/lena256color.png?raw=true) | ![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/encoded_lena256color_decoded_BPSK.png?raw=true)
+---|---|
+Sent|Received
 
 #### QPSK
+![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/lena256color.png?raw=true) | ![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/encoded_lena256color_decoded_QPSK.png?raw=true)
+---|---|
+Sent|Received
 
 #### BFSK
+![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/lena256color.png?raw=true) | ![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/encoded_lena256color_decoded_BFSK.png?raw=true)
+---|---|
+Sent|Received
 
 #### QFSK
+![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/lena256color.png?raw=true) | ![](https://github.com/PrayagS/Dayummunication/blob/master/images/test_images/encoded_lena256color_decoded_QFSK.png?raw=true)
+---|---|
+Sent|Received
 
 
 
