@@ -13,9 +13,7 @@
 </p>
 
 <p align="center">
-	<strong>
-		Dashboard Screenshot
-	</strong>
+	<img src="https://github.com/PrayagS/Dayummunication/blob/master/images/d2.png?raw=true">
 </p>
 
 <p align="center">
