@@ -99,10 +99,10 @@ Where pc is the bit error probability without encoding, t is the number of corre
 
 ## Technology Stack
 
-- Python as the primary language
-- SciPy and NumPy for scientific computation, inbuilt functions and array operations
-- Matplotlib for testing on backend and error analysis
-- Dash (Plotly) for the web application with dynamically updating results.
+- [Python](https://docs.python.org/3/) as the primary language
+- [SciPy](https://docs.scipy.org/doc/scipy/reference/) and [NumPy](https://numpy.org/doc/1.18/) for scientific computation, inbuilt functions and array operations
+- [Matplotlib](https://matplotlib.org/contents.html) for testing on backend and error analysis
+- [Plotly Dash](https://dash.plotly.com/) for the web application with dynamically updating results.
 
 ## Block Diagrams
 
@@ -221,6 +221,11 @@ This was done by converting the image to a matrix of RGB values. Each value in t
 [![Prayag Savsani](https://avatars2.githubusercontent.com/u/44412790?s=400&u=b8e40515644dc045ad5773dd1b6ded812d84d6b9&v=4)](https://github.com/PrayagS)  | [![Yashraj Kakkad](https://avatars0.githubusercontent.com/u/18521104?s=400&u=0b8ff7367cb07eba2014fb5be62cb0d89c38567a&v=4)](https://github.com/yashrajkakkad) | [![Kaushal Patil](https://avatars0.githubusercontent.com/u/50149591?s=400&u=e459fcc83d75c0c545ed7da2348feffe39206a32&v=4)](https://github.com/Kaushal1011) | [![Dhruvil Dave](https://avatars1.githubusercontent.com/u/43331416?s=400&u=f31cb03c456f103f87210810d46ed3832fb100e0&v=4)](https://github.com/dhruvildave)
 ---|---|---|---|
 [Prayag Savsani](https://github.com/PrayagS) | [Yashraj Kakkad](https://github.com/yashrajkakkad) | [Kaushal Patil](https://github.com/Kaushal1011) | [Dhruvil Dave](https://github.com/dhruvildave)
+
+## Credits
+
+This software uses code from the following open source repositories:
+- [GolayEncoderDecoder](https://github.com/mike006322/GolayEncoderDecoder)
 
 ## [License](https://github.com/PrayagS/Dayummunication/blob/master/LICENSE)
 
