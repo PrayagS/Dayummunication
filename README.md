@@ -90,9 +90,11 @@ The receiver demodulates the signal based on the chosen method of demodulation. 
 ### Error correction coding
 We use extended binary Golay code G24 to reduce the Bit Error Rate (BER). The extended Golay code encodes 12 bits of data in 24 words such that any 3-bit errors can be corrected or 7-bit errors can be detected. The standard coding notation for this code in terms of [n,k,d] is [24,12,8]. We use an existing Python implementation found in a GitHub repository and modify it for our purposes. (See credits)
 The bit error probability formula changes in this case and that is,
-$$
-P_b = \frac{1}{n}\Sigma_{j=t+1}^{n}j \cdot {{n}\choose{j}}\cdot p_c^j \cdot (1-p_c)^{n-j}
-$$
+
+<p align="center">
+<img src="https://latex.codecogs.com/png.latex?\dpi{120}&space;\large&space;P_b&space;=&space;\frac{1}{n}\sum_{j=t&plus;1}^{n}j&space;\cdot&space;{{n}\choose{j}}\cdot&space;p_c^j&space;\cdot&space;(1-p_c)^{n-j}" title="\large P_b = \frac{1}{n}\sum_{j=t+1}^{n}j \cdot {{n}\choose{j}}\cdot p_c^j \cdot (1-p_c)^{n-j}" />
+</p>
+
 Where pc is the bit error probability without encoding, t is the number of correctable errors (3) and n is the encoded size (24).
 
 ## Technology Stack
