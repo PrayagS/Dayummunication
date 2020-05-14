@@ -21,7 +21,10 @@
 <p align="center">
   <strong>
     <a href="#introduction">Introduction</a> •
-    <a href="#how-it-works">How it Works</a>
+    <a href="#specifications">Specifications</a> •
+    <a href="#block-diagrams">Block Diagrams</a> •
+    <a href="#flowchart">Flowchart</a> •
+     <a href="#results">Results</a>
   </strong>
 </p>
 
@@ -112,40 +115,40 @@ Where pc is the bit error probability without encoding, t is the number of corre
 </h5>
 
 ### BFSK
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BFSK_M.png?raw=true">
-</h5>
+</h4>
 
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BFSK_D.png?raw=true">
-</h5>
+</h4>
 
 ### QFSK
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QFSK_M.png?raw=true">
-</h5>
+</h4>
 
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QFSK_D.png?raw=true">
-</h5>
+</h4>
 
 ### BPSK
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BPSK_M.png?raw=true">
-</h5>
+</h4>
 
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/BPSK_D.png?raw=true">
-</h5>
+</h4>
 
 ### QPSK
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QPSK_M.png?raw=true">
-</h5>
+</h4>
 
-<h5 align="center">
+<h4 align="center">
   <img src="https://github.com/PrayagS/Dayummunication/blob/master/images/block_diagrams/QPSK_D.png?raw=true">
-</h5>
+</h4>
 
 ## Flowchart
 <h3 align="center">
